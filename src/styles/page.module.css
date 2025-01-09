@@ -8,7 +8,6 @@
 
   display: grid;
   grid-template-rows: 20px 1fr 20px;
-  align-items: center;
   justify-items: center;
   min-height: 100svh;
   padding: 80px;
@@ -63,6 +62,10 @@ a.primary {
   background: var(--foreground);
   color: var(--background);
   gap: 8px;
+}
+
+a.primary:hover {
+  background: var(--button-primary-hover);
 }
 
 .footer {
