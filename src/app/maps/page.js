@@ -2,6 +2,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { calculerTarif } from "../controllers/routesController";
 
 const containerStyle = {
   width: "100%",
@@ -12,6 +13,17 @@ const center = {
   lat: 45.764043, // Latitude de Paris
   lng: 4.835659, // Longitude de Paris
 };
+
+//définition de la limite géographique de la carte
+const rhoneLimite = {
+  north: 45.930385,
+  south: 45.430385,
+  west: 4.630385,
+  east: 5.130385,
+};
+
+//limitation de la carte en france 
+const componentRestrictions = { country : "fr" };
 
 const mapOtions = {
   streetViewControl: false, // Désactive le mode Street View
@@ -25,6 +37,9 @@ export default function MapPage() {
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
   const [directions, setDirections] = useState(null);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [tarif, setTarif] = useState(null);
 
   const pickupRef = useRef(null);
   const dropoffRef = useRef(null);
@@ -50,9 +65,19 @@ export default function MapPage() {
           destination: dropoff,
           travelMode: google.maps.TravelMode.DRIVING,
         },
-        (result, status) => {
+        async (result, status) => {
           if (status === google.maps.DirectionsStatus.OK) {
             setDirections(result);
+            const distance = result.routes[0].legs[0].distance.value / 1000;
+            const duration = result.routes[0].legs[0].duration.value / 60;
+            console.log(`Distance: ${distance} km`);
+
+            try {
+              const tarifCalculer = await calculerTarif(distance, duration);
+              setTarif(tarifCalculer);
+            } catch (error) {
+              console.error("Failed to calculate fare", error);
+            }
           } else {
             console.error(`Error fetching directions: ${result}`);
           }
@@ -98,7 +123,7 @@ export default function MapPage() {
             margin: "10px",
           }}
         >
-          <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)}>
+          <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)} options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}>
             <input
               type="text"
               placeholder="Enter pickup location"
@@ -111,7 +136,7 @@ export default function MapPage() {
               }}
             />
           </Autocomplete>
-          <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)}>
+          <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)} options={{ componentRestrictions: componentRestrictions }}>
             <input
               type="text"
               placeholder="Enter dropoff location"
@@ -124,6 +149,8 @@ export default function MapPage() {
               }}
             />
           </Autocomplete>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
           
           <button
             onClick={handleCalculateRoute}
@@ -139,6 +166,7 @@ export default function MapPage() {
           >
             Calculate Route
           </button>
+          {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: €{tarif}</p>}
         </div>
       </div>
 
