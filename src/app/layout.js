@@ -1,21 +1,23 @@
-import React from 'react';
+
+import { Geist, Geist_Mono } from "next/font/google";
+import "../styles/globals.css";
+import Navbar from "../components/Navbar"
+import Head from "next/head";
 
 const Layout = ({ children }) => {
   return (
-    <html lang="en">
-      <head>
-        <title>TaxiT</title>
-      </head>
-      <body style={{ margin: 0 }}>
-        <header style={{ background: '#333', color: '#fff', padding: '10px', position: 'fixed', top: 0, width: '100%', zIndex: 1000 }}>
-          <h1>TaxiT</h1>
-        </header>
-        <main style={{ paddingTop: '100px', paddingBottom: '50px' }}>{children}</main>
-        <footer>
-        </footer>
+    
+export default Layout;
+
+    <html lang="fr">
+      <Head>
+        <link rel="icon" href="/Icon.png" />
+      </Head>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Navbar />
+        <main>{children}</main>
       </body>
     </html>
   );
-};
+}
 
-export default Layout;
