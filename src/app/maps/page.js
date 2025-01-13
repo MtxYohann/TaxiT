@@ -70,13 +70,20 @@ export default function MapPage() {
             setDirections(result);
             const distance = result.routes[0].legs[0].distance.value / 1000;
             const duration = result.routes[0].legs[0].duration.value / 60;
+            const dateTime = `${date}T${time}`;
+            console.log(`Date: ${dateTime}`);
             console.log(`Distance: ${distance} km`);
-
+            if (!date || !time){
+              console.log("date et heure non indiqué j'ai brulé le serveur")
+              const errorTarifMessage = "merci de saisir une date et une heure pour estimer le coût de votre trajet"
+              setTarif(errorTarifMessage)
+              return 
+            }
             try {
-              const tarifCalculer = await calculerTarif(distance, duration);
+              const tarifCalculer = await calculerTarif(distance, duration, dateTime);
               setTarif(tarifCalculer);
             } catch (error) {
-              console.error("Failed to calculate fare", error);
+              console.error("Impossible de calculer le tarif du trajet", error);
             }
           } else {
             console.error(`Error fetching directions: ${result}`);
@@ -164,9 +171,9 @@ export default function MapPage() {
               cursor: "pointer",
             }}
           >
-            Calculate Route
+            Estimer le prix
           </button>
-          {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: €{tarif}</p>}
+          {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: {tarif}€</p>}
         </div>
       </div>
 
