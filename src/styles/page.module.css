@@ -10,9 +10,16 @@
   grid-template-rows: 20px 1fr 20px;
   justify-items: center;
   min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
+  padding: 30px;
+  gap: 8px;
   font-family: var(--font-geist-sans);
+}
+
+.title {
+  font-size: 32px;
+  display: flex;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .main {
@@ -39,6 +46,7 @@
 .ctas {
   display: flex;
   gap: 16px;
+  align-items: center;
 }
 
 .ctas a {
@@ -84,7 +92,15 @@ a.primary:hover {
   flex-shrink: 0;
 }
 
+.container {
+  display: flex;
+  justify-content: space-around;
+  gap: 32px;
+}
 
+.image {
+  border-radius: 5px;
+}
 
 @media (max-width: 600px) {
   .page {
