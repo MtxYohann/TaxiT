@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "../styles/page.module.css";
+import Link from 'next/link';
 
 export default function Home() {
     return (
@@ -13,7 +14,7 @@ export default function Home() {
                     <div className={styles.ctas}>
                         <a>Suggestion</a>
                         <div >
-                            <a className={styles.primary}
+                            <Link className={styles.primary}
                                 href="/maps">
                                 <Image
                                     src="/iconTaxi.png"
@@ -22,7 +23,7 @@ export default function Home() {
                                     height={50}
                                 />
                                 course
-                            </a>
+                            </Link>
                             <a className={styles.primary}>Read our docs</a>
                         </div>
                     </div>
