@@ -8,24 +8,27 @@ export function LoginButton() {
   if (session) {
     return (
       <div>
-        <p>Connecté en tant que {session.user.name}</p>
-        <button onClick={() => signOut()}>Se déconnecter</button>
+        <a onClick={() => signOut()}>Se déconnecter</a>
       </div>
     );
   }
   return (
-    <div>
-      <button onClick={() => (window.location.href = "/login")}>Se connecter</button>
-    </div>
+    <Link href="/login" style={{ marginRight: 10 }}>
+      Se connecter
+    </Link>
+
   );
 }
 
 export const RegisterButton = () => {
-  return (
-    <Link href="/register" style={{ marginRight: 10 }}>
-      Register
-    </Link>
-  );
+  const { data: session } = useSession();
+  if (!session) {
+    return (
+      <Link href="/register" style={{ marginRight: 10 }}>
+        Register
+      </Link>
+    );
+  }
 };
 
 
