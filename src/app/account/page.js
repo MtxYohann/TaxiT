@@ -9,7 +9,7 @@ export default function AccountPage() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState("");
     const router = useRouter();
-    
+
     const { data: session } = useSession();
 
     useEffect(() => {
@@ -43,6 +43,7 @@ export default function AccountPage() {
                     border: "none",
                     cursor: "pointer",
                     marginRight: "10px",
+                    borderRadius: "8px",
                 }}
             >
                 Modifier les informations
@@ -55,6 +56,7 @@ export default function AccountPage() {
                     color: "white",
                     border: "none",
                     cursor: "pointer",
+                    borderRadius: "8px",
                 }}
             >
                 Supprimer le compte
