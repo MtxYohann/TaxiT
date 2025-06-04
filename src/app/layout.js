@@ -24,8 +24,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Navbar />
-        <SessionProvider><main>{children}</main></SessionProvider>
+        <SessionProvider><Navbar />
+          <main>{children}</main></SessionProvider>
       </body>
     </html>
   );

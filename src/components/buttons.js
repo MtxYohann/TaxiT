@@ -14,21 +14,25 @@ export function LoginButton() {
     );
   }
   return (
-    <div>
-      <button onClick={() => (window.location.href = "/login")}>Se connecter</button>
-    </div>
+    <Link href="/login" style={{ marginRight: 10 }}>
+      Se connecter
+    </Link>
+
   );
 }  
 
 export const RegisterButton = () => {
-  return (
-    <Link href="/register" style={{ marginRight: 10 }}>
-      Register
-    </Link>
-  );  
+  const { data: session } = useSession();
+  if (!session) {
+    return (
+      <Link href="/register" style={{ marginRight: 10 }}>
+        Register
+      </Link>
+    );
+  }
 };
 
 
 export const ProfileButton = () => {
-  return <Link href="/profile">Profile</Link>;
+  return <Link href="/account">Profile</Link>;
 };

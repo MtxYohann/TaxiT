@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
     const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function RegisterPage() {
     const [phone, setPhone] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,6 +29,9 @@ export default function RegisterPage() {
 
             setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
             setError("");
+            setTimeout(() => {
+                router.push("/login");
+            }, 2000);
         } catch (err) {
             setError(err.message);
             setSuccess("");
@@ -60,10 +65,11 @@ export default function RegisterPage() {
                 <div style={{ marginBottom: "10px" }}>
                     <label>Téléphone :</label>
                     <input
-                        type="text"
+                        type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
+                        pattern="^(\+33|0)[1-9](\d{2}){4}$"
                         style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                     />
                 </div>
