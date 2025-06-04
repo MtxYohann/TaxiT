@@ -8,7 +8,7 @@ export function LoginButton() {
   if (session) {
     return (
       <div>
-        <p>Connecté en tant que {session.user.name}</p>
+        <p>Connecté en tant que {session.user.name} vous avez le role : {session.user.role}</p>
         <button onClick={() => signOut()}>Se déconnecter</button>
       </div>
     );
@@ -18,14 +18,14 @@ export function LoginButton() {
       <button onClick={() => (window.location.href = "/login")}>Se connecter</button>
     </div>
   );
-}
+}  
 
 export const RegisterButton = () => {
   return (
     <Link href="/register" style={{ marginRight: 10 }}>
       Register
     </Link>
-  );
+  );  
 };
 
 
