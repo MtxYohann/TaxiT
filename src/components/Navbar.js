@@ -10,12 +10,16 @@ export default function Navbar() {
             <ul>
                 <li><Link href="/">Accueil</Link></li>
                 <li><Link href="/about">About</Link></li>
-                <li><Link href="/contact">Contact</Link></li>              
+                <li><Link href="/contact">Contact</Link></li>
                 <li><LoginButton /></li>
                 <li><RegisterButton /></li>
+                {session?.user?.role === "user" && (
+                    <li className={styles.demandeur}><Link href="/demandechauffeur">Devenir chauffeur</Link></li>
+                )}
                 {session?.user && (
                     <li className={styles.profile}><Link href="/account">Profile</Link></li>
                 )}
+
             </ul>
         </nav>
     );
