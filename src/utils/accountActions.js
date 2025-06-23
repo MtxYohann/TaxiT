@@ -63,3 +63,4 @@ export async function getAddressFromCoords(lat, lng) {
     }
     return `${lat}, ${lng}`;
 }
+
