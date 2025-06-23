@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchUserData, deleteAccount, editAccount } from "../../utils/accountActions";
 import { useSession } from "next-auth/react";
+import Adminbutton from "../../components/adminbutton";
 
 export default function AccountPage() {
     const [user, setUser] = useState(null);
@@ -61,6 +62,7 @@ export default function AccountPage() {
             >
                 Supprimer le compte
             </button>
+            <Adminbutton />
         </div>
     );
 }

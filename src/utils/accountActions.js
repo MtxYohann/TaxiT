@@ -45,3 +45,4 @@ export const deleteAccount = async (router, setError, email) => {
 export const editAccount = (router) => {
     router.push("/edit-account"); // Rediriger vers une page d'édition
 };
+
