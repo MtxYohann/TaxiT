@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; //  Récupère les paramètres URL
-import "../../styles/chauffeur.css";
+import styles from "../../styles/chauffeur.module.css";
 
 function ChauffeursDisponibles() {
     const [chauffeurs, setChauffeurs] = useState([]);
@@ -69,7 +69,7 @@ function ChauffeursDisponibles() {
     };
 
     return (
-        <div className="container">
+        <div className={styles.container}>
             <h2>Chauffeurs Disponibles</h2>
 
             {loading ? (
@@ -79,12 +79,13 @@ function ChauffeursDisponibles() {
                     {chauffeurs.length > 0 ? (
                         chauffeurs.map((chauffeur) => (
                             <li key={chauffeur.id}>
-                                <div className="chauffeur-details">
-                                    <span className="chauffeur-name">{chauffeur.name}</span>
-                                    <span className="chauffeur-phone">{chauffeur.phone}</span>
+                                <div className={styles.chauffeur_details}>
+                                    Prénom :<span className={styles.chauffeur_name}>{chauffeur.name}</span>
+                                    <br />
+                                    Numéro de téléphone :<span className={styles.chauffeu_phone}>{chauffeur.phone}</span>
                                 </div>
                                 <button
-                                    className="reserve-button"
+                                    className={styles.reserve_button}
                                     onClick={() => handleReservation(chauffeur.id)}
                                 >
                                     Réserver

@@ -1,0 +1,67 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.li:hover {
+  background-color: #f5f5f5;
+  transform: scale(1.01);
+}
+
+.chauffeur-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.chauffeur_name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #007BFF;
+}
+
+.chauffeur_phone {
+  color: #555;
+  font-size: 14px;
+}
+
+.reserve_button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reserve_button:hover {
+  background-color: #218838;
+}
