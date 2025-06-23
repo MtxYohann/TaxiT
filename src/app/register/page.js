@@ -29,9 +29,11 @@ export default function RegisterPage() {
 
             setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
             setError("");
+
             setTimeout(() => {
                 router.push("/login");
-            }, 2000);
+            }, 500);
+
         } catch (err) {
             setError(err.message);
             setSuccess("");
@@ -43,7 +45,7 @@ export default function RegisterPage() {
             <h1>Inscription</h1>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: "10px" }}>
-                    <label>Nom :</label>
+                    <label>Prénom :</label>
                     <input
                         type="text"
                         value={name}
