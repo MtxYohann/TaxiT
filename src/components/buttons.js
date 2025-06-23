@@ -8,7 +8,6 @@ export function LoginButton() {
   if (session) {
     return (
       <div>
-        <p>Connecté en tant que {session.user.name} vous avez le role : {session.user.role}</p>
         <button onClick={() => signOut()}>Se déconnecter</button>
       </div>
     );
@@ -19,7 +18,7 @@ export function LoginButton() {
     </Link>
 
   );
-}  
+}
 
 export const RegisterButton = () => {
   const { data: session } = useSession();
