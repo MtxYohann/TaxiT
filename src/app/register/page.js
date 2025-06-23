@@ -67,10 +67,11 @@ export default function RegisterPage() {
                 <div style={{ marginBottom: "10px" }}>
                     <label>Téléphone :</label>
                     <input
-                        type="text"
+                        type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
+                        pattern="^(\+33|0)[1-9](\d{2}){4}$"
                         style={{ width: "100%", padding: "8px", marginTop: "5px" }}
                     />
                 </div>

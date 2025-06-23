@@ -33,5 +33,5 @@ export const RegisterButton = () => {
 
 
 export const ProfileButton = () => {
-  return <Link href="/profile">Profile</Link>;
+  return <Link href="/account">Profile</Link>;
 };
