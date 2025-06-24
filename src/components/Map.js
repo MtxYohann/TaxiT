@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 
 const containerStyle = {
@@ -25,7 +25,7 @@ const rhoneLimite = {
 };
 
 //limitation de la carte en france 
-const componentRestrictions = { country : "fr" };
+const componentRestrictions = { country: "fr" };
 
 const mapOtions = {
   streetViewControl: false, // Désactive le mode Street View
@@ -49,14 +49,14 @@ export default function MapPage() {
 
   const handlePlaceChanged = (autocomplete, setLocation) => {
     const place = autocomplete.getPlace();
-    if (place.geometry && place.geometry.location){
-    setLocation({
-      lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng(),
-    });
-  } else {
-    console.error("Invalid place");
-  }
+    if (place.geometry && place.geometry.location) {
+      setLocation({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    } else {
+      console.error("Invalid place");
+    }
   };
 
   const handleCalculateRoute = () => {
@@ -76,11 +76,11 @@ export default function MapPage() {
             const dateTime = `${date}T${time}`;
             console.log(`Date: ${dateTime}`);
             console.log(`Distance: ${distance} km`);
-            if (!date || !time){
+            if (!date || !time) {
               console.log("date et heure non indiqué j'ai brulé le serveur")
               const errorTarifMessage = "merci de saisir une date et une heure pour estimer le coût de votre trajet"
               setTarif(errorTarifMessage)
-              return 
+              return
             }
             try {
               const tarifCalculer = await calculerTarif(distance, duration, dateTime);
@@ -120,19 +120,19 @@ export default function MapPage() {
         const result = await response.json();
         console.log('Réponse du serveur:', result);
         if (!response.ok) {
-          
+
           throw new Error(result.message);
         }
-        else{
+        else {
           const reservationId = result.reservation.id;
           console.log("Course réservée avec succès ID de la reservation : ", result.reservation.id);
           router.push(`/reservation?reservationId=${reservationId}`);
         }
       } catch (error) {
         console.error("Impossible de réserver la course", error);
-     
+
       }
-      
+
     } else {
       console.error("Veuillez saisir les lieux de prise en charge et de dépose, ainsi que la date et l'heure de la réservation");
     }
@@ -146,11 +146,11 @@ export default function MapPage() {
           style={{
             flex: 2,
             position: "relative",
-            borderRadius: "15px", 
-            overflow: "hidden", 
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", 
+            borderRadius: "15px",
+            overflow: "hidden",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             margin: "10px",
-            maxHeight: "80vh", 
+            maxHeight: "80vh",
           }}
         >
           <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10} options={mapOtions}>
@@ -170,15 +170,15 @@ export default function MapPage() {
             position: "relative",
             backgroundColor: "white",
             borderRadius: "15px",
-            height : "75vh", 
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", 
+            height: "75vh",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             margin: "10px",
           }}
         >
           <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)} options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}>
             <input
               type="text"
-              placeholder="Enter pickup location"
+              placeholder="Entrée un point de départ"
               style={{
                 width: "90%",
                 marginBottom: "10px",
@@ -191,7 +191,7 @@ export default function MapPage() {
           <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)} options={{ componentRestrictions: componentRestrictions }}>
             <input
               type="text"
-              placeholder="Enter dropoff location"
+              placeholder="Entrée un point de d'arrivée"
               style={{
                 width: "90%",
                 marginBottom: "10px",
@@ -203,7 +203,7 @@ export default function MapPage() {
           </Autocomplete>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
-          
+
           <button
             onClick={handleCalculateRoute}
             style={{
@@ -214,6 +214,7 @@ export default function MapPage() {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
+              marginBottom: "10px",
             }}
           >
             Estimer le prix

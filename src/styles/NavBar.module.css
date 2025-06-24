@@ -3,13 +3,30 @@
     padding: 1rem;
 }
 
-.navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-}
-
 .navbar a {
     color: rgb(62, 57, 133);
     text-decoration: none;
+
+}
+
+.navbar ul {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar li {
+    margin-right: 20px;
+}
+
+.profile {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.demandeur {
+    margin-right: 20px;
+    margin-left: 0;
 }
