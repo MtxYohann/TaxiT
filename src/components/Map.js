@@ -4,6 +4,8 @@ import React, { useState, useRef } from "react";
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+
 
 
 const containerStyle = {
@@ -36,6 +38,7 @@ const mapOtions = {
 
 
 export default function MapPage() {
+  const { data: session, status } = useSession();
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
   const [directions, setDirections] = useState(null);
@@ -107,6 +110,7 @@ export default function MapPage() {
         dropoffLng: dropoff.lng,
         fare: parseFloat(tarif),
         dateTime: `${date}T${time}`,
+        clientId: session.user.id, 
       };
       try {
         const response = await fetch("http://localhost:4000/api/reservations/add-reservation", {
@@ -136,6 +140,30 @@ export default function MapPage() {
     } else {
       console.error("Veuillez saisir les lieux de prise en charge et de dépose, ainsi que la date et l'heure de la réservation");
     }
+  }
+
+  if (status === "loading") {
+    return <div>Chargement...</div>;
+  }
+  if (!session) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>Veuillez vous connecter pour accéder à la carte</h2>
+        <button
+          onClick={() => router.push("/login")}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#007BFF",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Se connecter
+        </button>
+      </div>
+    );
   }
 
   return (
