@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import styles from "../styles/Subscription.module.css";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -45,13 +46,30 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "0 auto" }}>
-            <CardElement />
-            <button type="submit" disabled={!stripe || loading} style={{ marginTop: 20 }}>
-                {loading ? "Abonnement en cours..." : "S'abonner"}
-            </button>
-            {message && <p>{message}</p>}
-        </form>
+        <div className={styles.formContainer}>
+            <form onSubmit={handleSubmit} className={styles.form}>
+                <h2>Souscrire à l’abonnement chauffeur</h2>
+                <div style={{ width: "100%", marginBottom: 20, marginTop: 20 }}>
+                    <CardElement options={{
+                        style: {
+                            base: {
+                                fontSize: "16px",
+                                color: "#333",
+                                "::placeholder": { color: "#888" }
+                            }
+                        }
+                    }} />
+                </div>
+                <button
+                    type="submit"
+                    disabled={!stripe || loading}
+                    className={styles.button}
+                >
+                    {loading ? "Abonnement en cours..." : "S'abonner"}
+                </button>
+                {message && <p className={styles.message}>{message}</p>}
+            </form>
+        </div>
     );
 }
 
