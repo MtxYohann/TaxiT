@@ -7,7 +7,9 @@
     color: rgb(62, 57, 133);
     text-decoration: none;
 
-}.navbar ul {
+}
+
+.navbar ul {
     display: flex;
     align-items: center;
     list-style: none;
@@ -22,4 +24,9 @@
 .profile {
     margin-left: auto;
     margin-right: 20px;
+}
+
+.demandeur {
+    margin-right: 20px;
+    margin-left: 0;
 }
