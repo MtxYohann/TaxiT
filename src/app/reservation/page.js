@@ -60,6 +60,8 @@ function ChauffeursDisponibles() {
             if (response.ok) {
                 console.log(" Réservation mise à jour avec succès !");
                 alert("🚖 Réservation confirmée avec ce chauffeur !");
+                
+                window.location.href = '/account'
             } else {
                 console.error(" Erreur lors de la réservation:", result);
             }

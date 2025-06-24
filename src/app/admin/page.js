@@ -83,6 +83,17 @@ export default function AdminPage() {
           console.error("Erreur lors de la récupération des utilisateurs :", error);
         }
     }
+    if (selectedModule === "verif-chauffeurs") {
+        try {
+          const res = await fetch("http://localhost:4000/api/users");
+          const data = await res.json();
+          console.log("Données récupérées :", data);
+          const filtered = data.filter((user) => user.isDriverRequested === true);
+          setUsers(filtered);
+        } catch (error) {
+          console.error("Erreur lors de la récupération des utilisateurs :", error);
+        }
+    }
 
     };
 
@@ -224,7 +235,83 @@ export default function AdminPage() {
           </div>
         );
       case "verif-chauffeurs":
-        return <p>🚗 Chauffeurs en attente</p>;
+        return (
+            <div>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
+              <span>👥</span> Chauffeurs en attente 
+            </h2>
+            {users.length === 0 ? (
+              <p>Aucun utilisateur trouvé.</p>
+            ) : (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                  gap: "1rem",
+                }}
+              >
+                {users.map((user) => (
+                  <div
+                    key={user.id}
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "15px",
+                      background: "#fff",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "1.1rem", marginBottom: "5px" }}>{user.name}</h3>
+                    <p>📧 {user.email}</p>
+                    <p>📞 {user.phone || "N/A"}</p>
+                    <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+                      <button
+                        onClick={() => handleEdit(user)}
+                        style={{
+                          backgroundColor: "#0070f3",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        📝 Éditer
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.email)}
+                        style={{
+                          backgroundColor: "#e00",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ❌ Supprimer
+                      </button>
+                      <button
+                        onClick={() => router.push(`/admin/verifier/${user.id}`)}
+                        style={{
+                            backgroundColor: "#28a745",
+                            color: "white",
+                            border: "none",
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
+                        >
+                        🔍 Vérifier
+                        </button>
+
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
       default:
         return <p>Sélectionnez un module.</p>;
     }
