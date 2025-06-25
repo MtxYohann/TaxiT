@@ -18,7 +18,12 @@ export default function EditAccountPage() {
             fetchUserData(
                 session.user.email,
                 (data) => {
-                    setUser(data);
+                    setUser({
+                        id: data.id,
+                        name: data.name,
+                        email: data.email,
+                        phone: data.phone,
+                    });
                     setForm({
                         name: data.name || "",
                         phone: data.phone || "",

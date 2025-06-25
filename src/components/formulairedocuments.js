@@ -1,36 +1,37 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import styles from "../styles/formulairedocuments.module.css";
 
 const handleRequestDriver = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:4000/api/request-driver`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }), // ← envoie le bon ID
-      });
-  
-      const result = await response.json();
-  
-      if (response.ok) {
-        alert("Demande envoyée ! En attente de validation par un administrateur.");
-      } else {
-        alert("Erreur : " + result.message);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la demande chauffeur :", error);
-      alert("Une erreur est survenue.");
+  try {
+    const response = await fetch(`http://localhost:4000/api/request-driver`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }), // ← envoie le bon ID
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("Demande envoyée ! En attente de validation par un administrateur.");
+    } else {
+      alert("Erreur : " + result.message);
     }
-  };
+  } catch (error) {
+    console.error("Erreur lors de la demande chauffeur :", error);
+    alert("Une erreur est survenue.");
+  }
+};
 
 
 export default function UploadDocumentsForm({ userId }) {
   const [permis, setPermis] = useState(null);
   const [carte, setCarte] = useState(null);
   const [message, setMessage] = useState("");
-  
+
 
 
   const handleSubmit = async (e) => {
@@ -64,22 +65,22 @@ export default function UploadDocumentsForm({ userId }) {
   };
 
   return (
-    <div style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px", maxWidth: "500px" }}>
-      <h2>📄 Envoi des documents chauffeur</h2>
+    <div className={styles.formContainer}>
+      <h2 className={styles.formTitle}>📄 Envoi des documents chauffeur</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Permis de conduire :</label><br />
-          <input type="file" accept="image/*,.pdf" onChange={(e) => setPermis(e.target.files[0])} />
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Permis de conduire :</label>
+          <input className={styles.inputFile} type="file" accept="image/*,.pdf" onChange={(e) => setPermis(e.target.files[0])} />
         </div>
-        <div style={{ marginTop: "10px" }}>
-          <label>Carte chauffeur :</label><br />
-          <input type="file" accept="image/*,.pdf" onChange={(e) => setCarte(e.target.files[0])} />
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Carte chauffeur :</label>
+          <input className={styles.inputFile} type="file" accept="image/*,.pdf" onChange={(e) => setCarte(e.target.files[0])} />
         </div>
-        <button onClick={() => handleRequestDriver(userId)} type="submit" style={{ marginTop: "15px", padding: "8px 16px" }}>
+        <button type="submit" className={styles.button}>
           Envoyer
         </button>
       </form>
-      {message && <p style={{ marginTop: "10px", color: "green" }}>{message}</p>}
+      {message && <p className={styles.message}>{message}</p>}
     </div>
   );
 }

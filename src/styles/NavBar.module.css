@@ -1,12 +1,17 @@
 .navbar {
-    background-color: #f0f0f0;
-    padding: 1rem;
+    background-color: #FEEAA1;
+    width: 80%;
+    margin: 24px auto;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 24px 32px;
 }
 
 .navbar a {
-    color: rgb(62, 57, 133);
+    color: #18534F;
     text-decoration: none;
-
+    font-weight: 500;
+    font-size: 1.15 rem;
 }
 
 .navbar ul {
@@ -24,9 +29,4 @@
 .profile {
     margin-left: auto;
     margin-right: 20px;
-}
-
-.demandeur {
-    margin-right: 20px;
-    margin-left: 0;
 }
