@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from "../../utils/accountActions";
 import { useSession } from "next-auth/react";
 import Adminbutton from "../../components/adminbutton";
+import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
 
 export default function AccountPage() {
     const [user, setUser] = useState(null);
@@ -91,6 +92,7 @@ export default function AccountPage() {
             </button>
 
             <Adminbutton />
+            <CommandeChauffeurBouton />
 
             <div style={{ marginTop: "40px", display: "flex", gap: "40px" }}>
                 <div style={{
