@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from "../../utils/accountActions";
 import { useSession } from "next-auth/react";
 import Adminbutton from "../../components/adminbutton";
+import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
 import styles from "../../styles/Account.module.css";
+
 
 export default function AccountPage() {
     const [user, setUser] = useState(null);
@@ -77,6 +79,7 @@ export default function AccountPage() {
                 Supprimer le compte
             </button>
             <Adminbutton />
+            <CommandeChauffeurBouton />
 
             <div className={styles.reservationsWrapper}>
                 <div className={styles.reservationColumn}>
