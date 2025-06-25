@@ -10,8 +10,8 @@
   grid-template-rows: 20px 1fr 20px;
   justify-items: center;
   min-height: 100svh;
-  padding: 80px;
-  gap: 64px;
+  padding: 60px;
+  gap: 32px;
   font-family: var(--font-geist-sans);
 }
 
@@ -84,8 +84,6 @@ a.primary:hover {
   flex-shrink: 0;
 }
 
-
-
 @media (max-width: 600px) {
   .page {
     padding: 32px;
@@ -119,4 +117,43 @@ a.primary:hover {
     align-items: center;
     justify-content: center;
   }
+}
+
+.introBlock {
+  background: #fffbe6;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 36px 28px;
+  max-width: 540px;
+  margin: 0 auto 0 auto;
+  text-align: center;
+}
+
+.title {
+  color: #226D68;
+  font-size: 2rem;
+  margin-bottom: 18px;
+}
+
+.motivation {
+  color: #333;
+  font-size: 1.15rem;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.ctaButton {
+  background: #226D68;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ctaButton:hover {
+  background: #18534F;
 }

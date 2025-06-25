@@ -1,0 +1,108 @@
+.pageContainer {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    font-size: 2.2rem;
+    color: #18534F;
+    margin-bottom: 24px;
+    font-weight: bold;
+}
+
+.userInfo {
+    margin-bottom: 20px;
+    background: #f5f7fa;
+    border-radius: 10px;
+    padding: 18px 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.button {
+    padding: 10px 22px;
+    background-color: #18534F;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.button:last-child {
+    background-color: red;
+    margin-right: 0;
+}
+
+.reservationsWrapper {
+    margin-top: 40px;
+    display: flex;
+    gap: 40px;
+}
+
+.reservationColumn {
+    flex: 1;
+    background: #226D68;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.reservationTitle {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+    font-size: 1.2rem;
+    color: #FEEAA1;
+}
+
+.reservationList {
+    list-style: none;
+    padding: 0;
+}
+
+.reservationItem {
+    margin-bottom: 18px;
+    padding: 12px 10px;
+    border-radius: 8px;
+    background: #ECF8F6;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.reservationDate {
+    font-weight: bold;
+    color: #18534F;
+    margin-bottom: 4px;
+}
+
+.reservationDatePast {
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.reservationInfo {
+    margin: 4px 0;
+    color: #333;
+}
+
+.reservationAddress {
+    color: #444;
+}
+
+.reservationStatus {
+    color: #18534F;
+    font-weight: bold;
+}
+
+.reservationFare {
+    font-weight: bold;
+    color: #222;
+}
+
+.emptyText {
+    color: #888;
+    margin-top: 12px;
+}
