@@ -26,7 +26,9 @@ export default function DemandeChauffeur() {
             <br />
             Pour postuler, veuillez remplir le formulaire ci-dessous avec vos informations et télécharger les documents requis.
           </p>
-
+          <p className={styles.abonnementInfo}>
+            ℹ️ <strong>Important :</strong> Pour finaliser votre inscription en tant que chauffeur TaxiT, un abonnement mensuel est requis. Ce paiement vous donne accès à la plateforme, à la gestion de vos courses et à l’accompagnement de notre équipe.
+          </p>
           {session && <UploadDocumentsForm userId={session.user.id} />}
         </div>
       </main>

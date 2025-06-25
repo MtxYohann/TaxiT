@@ -4,11 +4,11 @@
     align-items: center;
     justify-content: center;
     min-height: 80vh;
-    background: #f5f7fa;
+    background: #ECF8F6;
 }
 
 .form {
-    background: #fff;
+    background: #e0e0e0;
     padding: 36px 28px;
     border-radius: 14px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
@@ -20,7 +20,7 @@
 
 .button {
     padding: 12px 28px;
-    background: #0070f3;
+    background: #18534F;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -40,7 +40,7 @@
 
 .message {
     margin-top: 14px;
-    color: #0070f3;
+    color: #18534F;
     font-weight: bold;
     font-size: 1.05rem;
     text-align: center;
@@ -48,7 +48,7 @@
 
 .form h2 {
     margin-bottom: 24px;
-    color: #0070f3;
+    color: #18534F;
     font-size: 1.5rem;
     text-align: center;
 }
