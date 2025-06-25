@@ -55,6 +55,7 @@ export default function UploadDocumentsForm({ userId }) {
 
       if (res.ok) {
         setMessage("📁 Documents envoyés avec succès !");
+        await handleRequestDriver(userId); // ← appelle la fonction pour envoyer la demande
       } else {
         setMessage(`Erreur : ${data.error || "Erreur inconnue"}`);
       }
