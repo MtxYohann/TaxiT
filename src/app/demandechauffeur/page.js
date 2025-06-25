@@ -16,7 +16,17 @@ export default function DemandeChauffeur() {
 
     <div className={styles.page}>
       <main className={styles.main}>
-        <div>
+        <div className={styles.introBlock}>
+          <h1 className={styles.title}>Rejoignez TaxiT en tant que chauffeur !</h1>
+          <p className={styles.motivation}>
+            🚗 Devenez acteur de la mobilité urbaine et profitez d’une grande flexibilité.<br />
+            💸 Augmentez vos revenus en travaillant selon vos disponibilités.<br />
+            🤝 Rejoignez une communauté dynamique et bénéficiez d’un accompagnement personnalisé.<br />
+
+            <br />
+            Pour postuler, veuillez remplir le formulaire ci-dessous avec vos informations et télécharger les documents requis.
+          </p>
+
           {session && <UploadDocumentsForm userId={session.user.id} />}
         </div>
       </main>
