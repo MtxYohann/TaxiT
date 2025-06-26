@@ -6,6 +6,7 @@ import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from 
 import { useSession } from "next-auth/react";
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
+import ReviewButton from "../../components/ReviewButton";
 import styles from "../../styles/Account.module.css";
 
 
@@ -177,6 +178,7 @@ export default function AccountPage() {
                                     <div className={styles.reservationInfo}>
                                         Prix de la course : <span className={styles.reservationFare}>{r.fare} €</span>
                                     </div>
+                                    <ReviewButton driverId={r.driverId} reservationId={r.id} authorId={user.id} />
                                 </li>
                             ))}
                         </ul>

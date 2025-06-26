@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; //  Récupère les paramètres URL
 import styles from "../../styles/chauffeur.module.css";
+import DriverRating from "../../components/DriverRating";
 
 function ChauffeursDisponibles() {
     const [chauffeurs, setChauffeurs] = useState([]);
@@ -60,7 +61,7 @@ function ChauffeursDisponibles() {
             if (response.ok) {
                 console.log(" Réservation mise à jour avec succès !");
                 alert("🚖 Réservation confirmée avec ce chauffeur !");
-                
+
                 window.location.href = '/account'
             } else {
                 console.error(" Erreur lors de la réservation:", result);
@@ -86,6 +87,7 @@ function ChauffeursDisponibles() {
                                     <br />
                                     Numéro de téléphone :<span className={styles.chauffeu_phone}>{chauffeur.phone}</span>
                                 </div>
+                                <DriverRating driverId={chauffeur.id} />
                                 <button
                                     className={styles.reserve_button}
                                     onClick={() => handleReservation(chauffeur.id)}
