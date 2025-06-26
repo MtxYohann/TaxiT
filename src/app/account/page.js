@@ -57,6 +57,7 @@ export default function AccountPage() {
     const past = reservations
         .filter(r => new Date(r.dateTime) <= now)
         .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
     return (
         <div className={styles.pageContainer}>
             <h1 className={styles.header}>Mon Compte</h1>
@@ -64,6 +65,19 @@ export default function AccountPage() {
                 <p><strong>Nom :</strong> {user.name}</p>
                 <p><strong>Email :</strong> {user.email}</p>
                 <p><strong>Téléphone :</strong> {user.phone}</p>
+                {user.isDriverRequested && (
+                    <p><strong>Statut de chauffeur :</strong> En attente de validation</p>
+                )}
+                {user.isApproved === true && !user.subscriptionId && (
+                    <p>
+                        <strong>Statut de chauffeur :</strong> Votre compte chauffeur est approuvé, vous devez maintenant vous abonner pour accéder à la plateforme.
+                    </p>
+                )}
+                {user.isApproved === true && user.subscriptionId && (
+                    <p>
+                        <strong>Statut de chauffeur :</strong> Vous êtes un chauffeur abonné, bienvenue sur la plateforme !
+                    </p>
+                )}
             </div>
             <button
                 onClick={() => editAccount(router)}
@@ -80,7 +94,37 @@ export default function AccountPage() {
             </button>
             <Adminbutton />
             <CommandeChauffeurBouton />
+            {user.subscriptionId === null && user.isApproved === true && (
+                <button
+                    className={styles.button}
+                    style={{ backgroundColor: "#0070f3" }}
+                    onClick={() => router.push("/subscription")}
+                >
+                    S’abonner
+                </button>
+            )}
+            {user.subscriptionId && (
+                <button
+                    className={styles.button}
+                    style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
+                    onClick={async () => {
+                        const res = await fetch("http://localhost:4000/api/subscription/cancel-subscription", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email: user.email }),
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            alert("Abonnement annulé !");
 
+                        } else {
+                            alert("Erreur : " + (data.error?.message || data.error));
+                        }
+                    }}
+                >
+                    Se désabonner
+                </button>
+            )}
             <div className={styles.reservationsWrapper}>
                 <div className={styles.reservationColumn}>
                     <h2 className={styles.reservationTitle}>Réservations à venir</h2>
