@@ -15,7 +15,7 @@ export default function CommandeChauffeurBouton() {
 
   return (
     <button
-      onClick={() => router.push("/reservation-chauffeur")}
+      onClick={() => router.push("/courses")}
       style={{
         padding: "10px 20px",
         backgroundColor: "#0070f3",
