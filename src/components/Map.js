@@ -1,12 +1,9 @@
-
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-
-
+import { useAuth } from "../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 
 const containerStyle = {
   width: "100%",
@@ -36,9 +33,8 @@ const mapOtions = {
   mapTypeControl: false, // Désactive le contrôle du type de carte
 };
 
-
 export default function MapPage() {
-  const { data: session, status } = useSession();
+  const { user, token, isAuthenticated, loading } = useAuth(); // ← CHANGÉ : Utilise useAuth
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
   const [directions, setDirections] = useState(null);
@@ -49,6 +45,13 @@ export default function MapPage() {
 
   const pickupRef = useRef(null);
   const dropoffRef = useRef(null);
+
+  // ← AJOUTÉ : Vérification de l'authentification
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [loading, isAuthenticated, router]);
 
   const handlePlaceChanged = (autocomplete, setLocation) => {
     const place = autocomplete.getPlace();
@@ -110,13 +113,14 @@ export default function MapPage() {
         dropoffLng: dropoff.lng,
         fare: parseFloat(tarif),
         dateTime: `${date}T${time}`,
-        clientId: session.user.id, 
+        clientId: user?.id, // ← CHANGÉ : Utilise user du hook
       };
       try {
         const response = await fetch("http://13.38.221.141:4000/api/reservations/add-reservation", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // ← AJOUTÉ : Token d'authentification
           },
           body: JSON.stringify(reservationData),
         });
@@ -124,7 +128,6 @@ export default function MapPage() {
         const result = await response.json();
         console.log('Réponse du serveur:', result);
         if (!response.ok) {
-
           throw new Error(result.message);
         }
         else {
@@ -134,18 +137,18 @@ export default function MapPage() {
         }
       } catch (error) {
         console.error("Impossible de réserver la course", error);
-
       }
-
     } else {
       console.error("Veuillez saisir les lieux de prise en charge et de dépose, ainsi que la date et l'heure de la réservation");
     }
   }
 
-  if (status === "loading") {
+  // ← CHANGÉ : Nouvelle logique de chargement et vérification
+  if (loading) {
     return <div>Chargement...</div>;
   }
-  if (!session) {
+
+  if (!isAuthenticated) {
     return (
       <div style={{ padding: "20px", textAlign: "center" }}>
         <h2>Veuillez vous connecter pour accéder à la carte</h2>
@@ -277,4 +280,3 @@ export default function MapPage() {
     </LoadScript>
   );
 }
-
