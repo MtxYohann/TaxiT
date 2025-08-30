@@ -120,6 +120,7 @@ export default function AdminPage() {
     switch (selectedModule) {
       case "dashboard":
         return <p>Bienvenue dans le tableau de bord admin.</p>;
+        
       case "users":
         return (
             <div>
@@ -152,7 +153,7 @@ export default function AdminPage() {
                     <p>📞 {userItem.phone || "N/A"}</p>
                     <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
                       <button
-                        onClick={() => handleEdit(userItem, token)} // ← CHANGÉ : Passe le token
+                        onClick={() => handleEdit(userItem, token)}
                         style={{
                           backgroundColor: "#0070f3",
                           color: "white",
@@ -165,7 +166,7 @@ export default function AdminPage() {
                         📝 Éditer
                       </button>
                       <button
-                        onClick={() => handleDelete(userItem.email, token)} // ← CHANGÉ : Passe le token
+                        onClick={() => handleDelete(userItem.email, token)}
                         style={{
                           backgroundColor: "#e00",
                           color: "white",
@@ -184,8 +185,170 @@ export default function AdminPage() {
             )}
           </div>
         );
-      // ← RÉPÈTE les mêmes changements pour les autres cases...
-      // (je t'épargne la répétition, mais applique les mêmes modifications)
+
+      case "chauffeurs":
+        return (
+            <div>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
+              <span>🚖</span> Chauffeurs (role: "driver")
+            </h2>
+            {users.length === 0 ? (
+              <p>Aucun chauffeur trouvé.</p>
+            ) : (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                  gap: "1rem",
+                }}
+              >
+                {users.map((userItem) => (
+                  <div
+                    key={userItem.id}
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "15px",
+                      background: "#fff",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "1.1rem", marginBottom: "5px" }}>{userItem.name}</h3>
+                    <p>📧 {userItem.email}</p>
+                    <p>📞 {userItem.phone || "N/A"}</p>
+                    <p>🚗 Statut: {userItem.isApproved ? "Approuvé" : "En attente"}</p>
+                    <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+                      <button
+                        onClick={() => handleEdit(userItem, token)}
+                        style={{
+                          backgroundColor: "#0070f3",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        📝 Éditer
+                      </button>
+                      <button
+                        onClick={() => handleDelete(userItem.email, token)}
+                        style={{
+                          backgroundColor: "#e00",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ❌ Supprimer
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case "verif-chauffeurs":
+        return (
+            <div>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
+              <span>⏳</span> Demandes de chauffeurs
+            </h2>
+            {users.length === 0 ? (
+              <p>Aucune demande en attente.</p>
+            ) : (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                  gap: "1rem",
+                }}
+              >
+                {users.map((userItem) => (
+                  <div
+                    key={userItem.id}
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "15px",
+                      background: "#fff",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h3 style={{ fontSize: "1.1rem", marginBottom: "5px" }}>{userItem.name}</h3>
+                    <p>📧 {userItem.email}</p>
+                    <p>📞 {userItem.phone || "N/A"}</p>
+                    <p>📅 Demande chauffeur: {userItem.isDriverRequested ? "Oui" : "Non"}</p>
+                    <p>✅ Approuvé: {userItem.isApproved ? "Oui" : "Non"}</p>
+                    <div style={{ marginTop: "10px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                      <button
+                        onClick={async () => {
+                          // Approuver la demande chauffeur
+                          try {
+                            const res = await fetch("http://13.38.221.141:4000/api/approve-driver", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                              },
+                              body: JSON.stringify({ email: userItem.email })
+                            });
+                            const data = await res.json();
+                            alert(data.message);
+                            window.location.reload();
+                          } catch (error) {
+                            console.error("Erreur approbation:", error);
+                            alert("Erreur lors de l'approbation.");
+                          }
+                        }}
+                        style={{
+                          backgroundColor: "#28a745",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ✅ Approuver
+                      </button>
+                      <button
+                        onClick={() => handleEdit(userItem, token)}
+                        style={{
+                          backgroundColor: "#0070f3",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        📝 Éditer
+                      </button>
+                      <button
+                        onClick={() => handleDelete(userItem.email, token)}
+                        style={{
+                          backgroundColor: "#e00",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ❌ Supprimer
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
       
       default:
         return <p>Sélectionnez un module.</p>;
