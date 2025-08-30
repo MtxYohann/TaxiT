@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from "../../utils/accountActions";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
 import styles from "../../styles/Account.module.css";
-
 
 export default function AccountPage() {
     const [user, setUser] = useState(null);
@@ -16,13 +15,21 @@ export default function AccountPage() {
     const router = useRouter();
     const [pickupAddresses, setPickupAddresses] = useState({});
     const [dropoffAddresses, setDropoffAddresses] = useState({});
-    const { data: session } = useSession();
+    const { user: authUser, isAuthenticated, loading, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
 
+    // ← CHANGÉ : Vérification d'authentification et récupération des données
     useEffect(() => {
-        if (session?.user?.email) {
-            fetchUserData(session.user.email, setUser, setReservations, setError);
+        if (!loading && !isAuthenticated) {
+            router.push('/login');
+            return;
         }
-    }, [session]);
+
+        if (isAuthenticated) {
+            // Plus besoin de passer l'email, fetchUserData utilise maintenant localStorage
+            fetchUserData(setUser, setReservations, setError);
+        }
+    }, [isAuthenticated, loading, router]);
+
     useEffect(() => {
         async function fetchAddresses() {
             const pickup = {};
@@ -40,6 +47,16 @@ export default function AccountPage() {
         }
         if (reservations.length > 0) fetchAddresses();
     }, [reservations]);
+
+    // ← AJOUTÉ : État de chargement
+    if (loading) {
+        return <p>Chargement...</p>;
+    }
+
+    // ← AJOUTÉ : Redirection si pas connecté
+    if (!isAuthenticated) {
+        return null;
+    }
 
     if (error) {
         return <p style={{ color: "red" }}>{error}</p>;
@@ -75,7 +92,7 @@ export default function AccountPage() {
                 )}
                 {user.isApproved === true && user.subscriptionId && (
                     <p>
-                        <strong>Statut de chauffeur :</strong> Vous êtes un chauffeur abonné, bienvenue sur la plateforme !
+                        <strong>Statut de chauffeur :</strong> Vous êtes un chauffeur abonné, bienvenue sur la plateforme !
                     </p>
                 )}
             </div>
@@ -86,7 +103,7 @@ export default function AccountPage() {
                 Modifier les informations
             </button>
             <button
-                onClick={() => deleteAccount(router, setError, user.email)}
+                onClick={() => deleteAccount(router, setError)} // ← CHANGÉ : Plus besoin de passer l'email
                 className={styles.button}
                 style={{ backgroundColor: "red" }}
             >
@@ -100,7 +117,7 @@ export default function AccountPage() {
                     style={{ backgroundColor: "#0070f3" }}
                     onClick={() => router.push("/subscription")}
                 >
-                    S’abonner
+                    S'abonner
                 </button>
             )}
             {user.subscriptionId && (
@@ -108,15 +125,18 @@ export default function AccountPage() {
                     className={styles.button}
                     style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
                     onClick={async () => {
+                        // ← CHANGÉ : Ajoute le token d'authentification
                         const res = await fetch("http://13.38.221.141:4000/api/subscription/cancel-subscription", {
                             method: "POST",
-                            headers: { "Content-Type": "application/json" },
+                            headers: { 
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token
+                            },
                             body: JSON.stringify({ email: user.email }),
                         });
                         const data = await res.json();
                         if (data.success) {
                             alert("Abonnement annulé !");
-
                         } else {
                             alert("Erreur : " + (data.error?.message || data.error));
                         }
