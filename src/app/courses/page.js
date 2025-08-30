@@ -1,30 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import { getAddressFromCoords } from "@/src/utils/accountActions";
 import { useRouter } from "next/navigation";
 
 const DriverDashboard = () => {
-  const { data: session, status } = useSession();
+  const { user, loading, isAuthenticated, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
   const router = useRouter();
   const [pickupAddresses, setPickupAddresses] = useState({});
   const [dropoffAddresses, setDropoffAddresses] = useState({});
   const [selectedTab, setSelectedTab] = useState("pending");
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(true); // ← CHANGÉ : Renommé pour éviter confusion
 
-  const chauffeurId = session?.user?.id;
+  const chauffeurId = user?.id; // ← CHANGÉ : Utilise user au lieu de session
 
   const fetchOrders = async () => {
     if (!chauffeurId) return;
-    setLoading(true);
+    setOrdersLoading(true);
 
     let url = `http://13.38.221.141:4000/api/reservations/driver/${chauffeurId}`;
     if (selectedTab === "future") url += "?status=accepted&upcoming=true";
     else if (selectedTab === "history") url += "?history=true";
 
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
+        }
+      });
       const data = await res.json();
       setOrders(data);
 
@@ -45,19 +49,30 @@ const DriverDashboard = () => {
     } catch (err) {
       console.error("Erreur lors du chargement :", err);
     } finally {
-      setLoading(false);
+      setOrdersLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, [selectedTab, chauffeurId]);
+    // ← AJOUTÉ : Vérification d'authentification
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+
+    if (chauffeurId && token) {
+      fetchOrders();
+    }
+  }, [selectedTab, chauffeurId, token, loading, isAuthenticated, router]); // ← CHANGÉ : Nouvelles dépendances
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
       const res = await fetch(`http://13.38.221.141:4000/api/reservations/${reservationId}/status`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
+        },
         body: JSON.stringify({ status: action === "accept" ? "accepted" : "rejected" }),
       });
 
@@ -74,7 +89,7 @@ const DriverDashboard = () => {
   };
 
   const renderOrders = () => {
-    if (loading) return <p>⏳ Chargement des commandes...</p>;
+    if (ordersLoading) return <p>⏳ Chargement des commandes...</p>; // ← CHANGÉ : ordersLoading
     if (orders.length === 0) return <p>😕 Aucune commande à afficher.</p>;
 
     return (
@@ -143,7 +158,9 @@ const DriverDashboard = () => {
     );
   };
 
-  if (status === "loading") return <p>Chargement de la session...</p>;
+  // ← CHANGÉ : Nouvelles conditions de chargement et d'authentification
+  if (loading) return <p>Chargement de la session...</p>;
+  if (!isAuthenticated) return <p>Redirection...</p>;
   if (!chauffeurId) return <p>Vous devez être connecté comme chauffeur.</p>;
 
   return (
