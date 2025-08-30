@@ -4,6 +4,24 @@ import Image from "next/image";
 import styles from "../styles/page.module.css";
 
 export default function Home() {
+    const { user, loading, isAuthenticated } = useAuth();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.reload(); // Recharge la page pour mettre à jour l'état
+    };
+
+    if (loading) {
+        return (
+            <div className={styles.page}>
+                <main className={styles.main}>
+                    <p>Chargement...</p>
+                </main>
+            </div>
+        );
+    }
+
     return (
 
         <div className={styles.page}>
