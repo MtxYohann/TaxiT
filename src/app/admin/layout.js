@@ -1,23 +1,31 @@
 "use client";
-import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { useAuth } from "../../hooks/useAuth";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLayout({children}) {
-  const { user, loading, isAuthenticated } = useAuth(); // ← CHANGÉ : Utilise useAuth
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return; // attend que l'authentification se charge
+    if (loading) return;
 
-    // Si l'utilisateur n'est pas connecté ou pas admin, on redirige
+    console.log("AdminLayout - Vérification:", { isAuthenticated, userRole: user?.role });
+
     if (!isAuthenticated || user?.role !== "admin") {
+      console.log("❌ Accès refusé, redirection...");
       router.push("/unauthorized");
+    } else {
+      console.log("✅ Accès admin autorisé");
     }
-  }, [user, loading, isAuthenticated, router]); // ← CHANGÉ : Nouvelles dépendances
+  }, [user, loading, isAuthenticated, router]);
 
-  if (loading || !isAuthenticated || user?.role !== "admin") {
+  if (loading) {
     return <p>Chargement...</p>;
+  }
+
+  if (!isAuthenticated || user?.role !== "admin") {
+    return <p>Redirection...</p>;
   }
 
   return (
