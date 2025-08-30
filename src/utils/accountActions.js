@@ -1,19 +1,27 @@
-// Fonction pour récupérer les données utilisateur
-export const fetchUserData = async (email, setUser, setReservations, setError) => {
+import { getUser, getToken } from './auth';
+
+// Fonction pour récupérer les données utilisateur (adaptée)
+export const fetchUserData = async (setUser, setReservations, setError) => {
     try {
-        // Récupérer l'utilisateur
-        const resUser = await fetch("http://13.38.221.141:4000/api/user", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-        });
-        if (!resUser.ok) throw new Error("Impossible de récupérer les infos utilisateur.");
-        const userData = await resUser.json();
-        console.log("Données utilisateur récupérées :", userData);
+        // Récupérer l'utilisateur depuis localStorage
+        const userData = getUser();
+        const token = getToken();
+        
+        if (!userData || !token) {
+            throw new Error("Utilisateur non connecté");
+        }
+        
+        console.log("Données utilisateur depuis localStorage :", userData);
         setUser(userData);
 
-        // Récupérer les réservations
-        const resResa = await fetch(`http://13.38.221.141:4000/api/reservations/${userData.id}`);
+        // Récupérer les réservations avec le token
+        const resResa = await fetch(`http://13.38.221.141:4000/api/reservations/${userData.id}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+        
         if (!resResa.ok) throw new Error("Impossible de récupérer les réservations.");
         const reservationsData = await resResa.json();
         console.log("Données réservations :", reservationsData);
@@ -24,20 +32,34 @@ export const fetchUserData = async (email, setUser, setReservations, setError) =
     }
 };
 
-// Fonction pour supprimer le compte
-export const deleteAccount = async (router, setError, email) => {
+// Fonction pour supprimer le compte (adaptée)
+export const deleteAccount = async (router, setError) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
         try {
+            const userData = getUser();
+            const token = getToken();
+            
+            if (!userData || !token) {
+                throw new Error("Utilisateur non connecté");
+            }
+
             const res = await fetch("http://13.38.221.141:4000/api/delete", {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ email: userData.email }),
             });
 
             if (!res.ok) {
                 throw new Error("Erreur lors de la suppression du compte.");
             }
 
+            // Nettoyer le localStorage après suppression
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            
             alert("Compte supprimé avec succès.");
             router.push("/register");
         } catch (err) {
@@ -48,7 +70,7 @@ export const deleteAccount = async (router, setError, email) => {
 
 // Fonction pour modifier les données utilisateur
 export const editAccount = (router) => {
-    router.push("/edit-account"); // Rediriger vers une page d'édition
+    router.push("/edit-account");
 };
 
 export async function getAddressFromCoords(lat, lng) {
@@ -63,4 +85,3 @@ export async function getAddressFromCoords(lat, lng) {
     }
     return `${lat}, ${lng}`;
 }
-

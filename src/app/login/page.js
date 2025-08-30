@@ -22,7 +22,7 @@ export default function LoginPage() {
             if (response.ok) {
                 // Stocker le token dans localStorage ou sessionStorage
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('user', JSON.stringify(data.user));
 
                 console.log("Connexion réussie");
                 window.location.href = "/";
