@@ -40,11 +40,21 @@ export default function Navbar() {
                     // Si connecté : afficher les options utilisateur
                     <>
                         <li><Link href="/maps">Commander</Link></li>
+                        
+                        {/* ← AJOUTÉ : Bouton Devenir chauffeur pour les users */}
                         {user?.role === "user" && (
                             <li className={styles.profile}>
                                 <Link href="/demandechauffeur">Devenir chauffeur</Link>
                             </li>
                         )}
+                        
+                        {/* ← AJOUTÉ : Bouton Mes courses pour les chauffeurs */}
+                        {user?.role === "driver" && (
+                            <li className={styles.profile}>
+                                <Link href="/courses">🚖 Mes courses</Link>
+                            </li>
+                        )}
+                        
                         <li className={styles.profile}>
                             <Link href="/account">Profile</Link>
                         </li>
