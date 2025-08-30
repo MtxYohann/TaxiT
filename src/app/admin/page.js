@@ -289,13 +289,13 @@ export default function AdminPage() {
                         onClick={async () => {
                           // Approuver la demande chauffeur
                           try {
-                            const res = await fetch("http://13.38.221.141:4000/api/approve-driver", {
+                            const res = await fetch(`http://13.38.221.141:4000/api/approve-driver/${userItem.id}`, { // ← CHANGÉ : ID dans l'URL
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
                                 "Authorization": `Bearer ${token}`
                               },
-                              body: JSON.stringify({ email: userItem.email })
+                              body: JSON.stringify({ approve: true }) // ← CHANGÉ : approve: true dans le body
                             });
                             const data = await res.json();
                             alert(data.message);
