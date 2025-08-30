@@ -1,22 +1,23 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function DriverPage({children}) {
-  const { data: session, status } = useSession();
+  const { user, loading, isAuthenticated } = useAuth(); // ← CHANGÉ : Utilise useAuth
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "loading") return; // attend que la session se charge
+    if (loading) return; // attend que l'authentification se charge
 
-    
-    if (!session || session.user.role !== "driver") {
+    // ← CHANGÉ : Vérification avec useAuth
+    if (!isAuthenticated || user?.role !== "driver") {
       router.push("/unauthorized");
     }
-  }, [session, status, router]);
+  }, [user, loading, isAuthenticated, router]); // ← CHANGÉ : Nouvelles dépendances
 
-  if (status === "loading" || !session || session.user.role !== "driver") {
+  // ← CHANGÉ : Conditions avec useAuth
+  if (loading || !isAuthenticated || user?.role !== "driver") {
     return <p>Chargement...</p>;
   }
 
