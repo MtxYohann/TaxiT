@@ -18,30 +18,28 @@ export default function LoginPage() {
             });
 
             const data = await response.json();
-            
-            // 🔥 AJOUTE CETTE LIGNE POUR DÉBUGGER
             console.log("Réponse complète du serveur:", data);
 
             if (response.ok) {
-                // 🔥 AJOUTE CES VÉRIFICATIONS
                 console.log("Token reçu:", data.token);
-                console.log("User reçu:", data.user);
                 
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     console.log("✅ Token sauvegardé");
-                } else {
-                    console.error("❌ Aucun token reçu du serveur");
                 }
                 
-                if (data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    console.log("✅ User sauvegardé:", JSON.stringify(data.user));
-                } else {
-                    console.error("❌ Aucune donnée utilisateur reçue du serveur");
-                }
+                // 🔥 CORRECTION : Les données utilisateur sont directement dans data
+                const userData = {
+                    id: data.id,
+                    email: data.email,
+                    name: data.name,
+                    role: data.role
+                };
+                
+                localStorage.setItem('user', JSON.stringify(userData));
+                console.log("✅ User sauvegardé:", JSON.stringify(userData));
 
-                // Vérification de ce qui est vraiment dans le localStorage
+                // Vérification
                 console.log("🔍 Vérification localStorage:");
                 console.log("Token dans localStorage:", localStorage.getItem('token'));
                 console.log("User dans localStorage:", localStorage.getItem('user'));
