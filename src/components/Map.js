@@ -113,7 +113,7 @@ export default function MapPage() {
         clientId: session.user.id, 
       };
       try {
-        const response = await fetch("http://localhost:4000/api/reservations/add-reservation", {
+        const response = await fetch("http://13.38.221.141:4000/api/reservations/add-reservation", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

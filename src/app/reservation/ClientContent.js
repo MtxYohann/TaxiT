@@ -20,7 +20,7 @@ function ChauffeursClientWrapper() {
         const fetchChauffeurs = async () => {
             try {
                 setLoading(true);
-                const response = await fetch("http://localhost:4000/api/chauffeurs-disponibles");
+                const response = await fetch("http://13.38.221.141:4000/api/chauffeurs-disponibles");
                 if (!response.ok) {
                     throw new Error("Échec de la récupération des chauffeurs.");
                 }
@@ -42,7 +42,7 @@ function ChauffeursClientWrapper() {
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/reservations/${chauffeurId}`, {
+            const response = await fetch(`http://13.38.221.141:4000/api/reservations/${chauffeurId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

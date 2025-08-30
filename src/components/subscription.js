@@ -26,7 +26,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
             return;
         }
 
-        const res = await fetch("http://localhost:4000/api/subscription/create-subscription", {
+        const res = await fetch("http://13.38.221.141:4000/api/subscription/create-subscription", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

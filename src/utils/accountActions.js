@@ -2,7 +2,7 @@
 export const fetchUserData = async (email, setUser, setReservations, setError) => {
     try {
         // Récupérer l'utilisateur
-        const resUser = await fetch("http://localhost:4000/api/user", {
+        const resUser = await fetch("http://13.38.221.141:4000/api/user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
@@ -13,7 +13,7 @@ export const fetchUserData = async (email, setUser, setReservations, setError) =
         setUser(userData);
 
         // Récupérer les réservations
-        const resResa = await fetch(`http://localhost:4000/api/reservations/${userData.id}`);
+        const resResa = await fetch(`http://13.38.221.141:4000/api/reservations/${userData.id}`);
         if (!resResa.ok) throw new Error("Impossible de récupérer les réservations.");
         const reservationsData = await resResa.json();
         console.log("Données réservations :", reservationsData);
@@ -28,7 +28,7 @@ export const fetchUserData = async (email, setUser, setReservations, setError) =
 export const deleteAccount = async (router, setError, email) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
         try {
-            const res = await fetch("http://localhost:4000/api/delete", {
+            const res = await fetch("http://13.38.221.141:4000/api/delete", {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),

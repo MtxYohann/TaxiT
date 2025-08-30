@@ -11,7 +11,7 @@ export default function VerifChauffeurPage() {
   useEffect(() => {
     const fetchDocs = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/driver-documents/${id}`);
+        const res = await fetch(`http://13.38.221.141:4000/api/driver-documents/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
         setDocuments(data);
@@ -26,7 +26,7 @@ export default function VerifChauffeurPage() {
 
   const handleValidation = async (isApproved) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/approve-driver/${id}`, {
+      const res = await fetch(`http://13.38.221.141:4000/api/approve-driver/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ approve: isApproved }),
@@ -56,7 +56,7 @@ export default function VerifChauffeurPage() {
         <div style={{ textAlign: "center" }}>
           <h3 style={{ marginBottom: "10px" }}>📄 Permis</h3>
           <img
-            src={`http://localhost:4000${documents.permisUrl}`}
+            src={`http://13.38.221.141:4000${documents.permisUrl}`}
             alt="Permis"
             style={{
               maxWidth: "300px",
@@ -70,7 +70,7 @@ export default function VerifChauffeurPage() {
         <div style={{ textAlign: "center" }}>
           <h3 style={{ marginBottom: "10px" }}>🪪 Carte chauffeur</h3>
           <img
-            src={`http://localhost:4000${documents.carteUrl}`}
+            src={`http://13.38.221.141:4000${documents.carteUrl}`}
             alt="Carte chauffeur"
             style={{
               maxWidth: "300px",

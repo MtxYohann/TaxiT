@@ -108,7 +108,7 @@ export default function AccountPage() {
                     className={styles.button}
                     style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
                     onClick={async () => {
-                        const res = await fetch("http://localhost:4000/api/subscription/cancel-subscription", {
+                        const res = await fetch("http://13.38.221.141:4000/api/subscription/cancel-subscription", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ email: user.email }),

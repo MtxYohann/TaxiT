@@ -12,7 +12,7 @@ const handler = NextAuth({
             async authorize(credentials) {
                 const { email, password } = credentials;
                 console.log("Données envoyées à l'API backend :", { email, password });
-                const res = await fetch("http://localhost:4000/api/login", {
+                const res = await fetch("http://13.38.221.141:4000/api/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password }),

@@ -19,7 +19,7 @@ const DriverDashboard = () => {
     if (!chauffeurId) return;
     setLoading(true);
 
-    let url = `http://localhost:4000/api/reservations/driver/${chauffeurId}`;
+    let url = `http://13.38.221.141:4000/api/reservations/driver/${chauffeurId}`;
     if (selectedTab === "future") url += "?status=accepted&upcoming=true";
     else if (selectedTab === "history") url += "?history=true";
 
@@ -55,7 +55,7 @@ const DriverDashboard = () => {
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/reservations/${reservationId}/status`, {
+      const res = await fetch(`http://13.38.221.141:4000/api/reservations/${reservationId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: action === "accept" ? "accepted" : "rejected" }),

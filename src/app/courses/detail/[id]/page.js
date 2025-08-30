@@ -16,7 +16,7 @@ export default function OrderDetail() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:4000/api/reservations/findbyid/${id}`)
+    fetch(`http://13.38.221.141:4000/api/reservations/findbyid/${id}`)
       .then((r) => r.json())
       .then((data) => {
         setOrder(data);

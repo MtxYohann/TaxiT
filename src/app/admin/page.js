@@ -8,7 +8,7 @@ const handleDelete = async (email) => {
     if (!confirm(`Supprimer ${email} ?`)) return;
   
     try {
-      const res = await fetch("http://localhost:4000/api/delete", {
+      const res = await fetch("http://13.38.221.141:4000/api/delete", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -29,7 +29,7 @@ const handleDelete = async (email) => {
     if (!newName && !newPhone) return;
   
     try {
-      const res = await fetch("http://localhost:4000/api/edit-account", {
+      const res = await fetch("http://13.38.221.141:4000/api/edit-account", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -65,7 +65,7 @@ export default function AdminPage() {
     const fetchUsers = async () => {
       if (selectedModule === "users") {
         try {
-          const res = await fetch("http://localhost:4000/api/users");
+          const res = await fetch("http://13.38.221.141:4000/api/users");
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "user");
           setUsers(filtered);
@@ -75,7 +75,7 @@ export default function AdminPage() {
       }
       if (selectedModule === "chauffeurs") {
         try {
-          const res = await fetch("http://localhost:4000/api/users");
+          const res = await fetch("http://13.38.221.141:4000/api/users");
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "driver");
           setUsers(filtered);
@@ -85,7 +85,7 @@ export default function AdminPage() {
     }
     if (selectedModule === "verif-chauffeurs") {
         try {
-          const res = await fetch("http://localhost:4000/api/users");
+          const res = await fetch("http://13.38.221.141:4000/api/users");
           const data = await res.json();
           console.log("Données récupérées :", data);
           const filtered = data.filter((user) => user.isDriverRequested === true);

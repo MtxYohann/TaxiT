@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -11,28 +10,28 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Formulaire soumis"); // Vérifie si cette ligne s'affiche
-        console.log("Email:", email);
-        console.log("Password:", password);
-
         try {
-            const result = await signIn("credentials", {
-                redirect: false, // Empêche la redirection automatique
-                email,
-                password,
+            const response = await fetch('http://10.0.1.191:4000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
             });
 
-            console.log("Résultat de signIn :", result); // Vérifie si cette ligne s'affiche
+            const data = await response.json();
 
-            if (result?.error) {
-                console.log("Erreur détectée :", result.error); // Vérifie si une erreur est détectée
-                setError("Identifiants incorrects. Veuillez réessayer.");
-            } else {
-                console.log("Connexion réussie, redirection..."); // Vérifie si la connexion réussit
+            if (response.ok) {
+                // Stocker le token dans localStorage ou sessionStorage
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data));
+
+                console.log("Connexion réussie");
                 window.location.href = "/";
+            } else {
+                setError(data.error || "Erreur de connexion");
             }
         } catch (err) {
-            console.error("Erreur dans handleSubmit :", err); // Capture les erreurs inattendues
+            console.error("Erreur:", err);
+            setError("Erreur de connexion au serveur");
         }
     };
     return (
