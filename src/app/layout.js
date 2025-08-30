@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import Navbar from "../components/Navbar"
 import Head from "next/head";
-// import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
@@ -23,10 +24,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {/* ← CHANGÉ : Plus de SessionProvider, juste la Navbar et les enfants */}
-        <Navbar />
-        <main>{children}</main>
+        <SessionProvider><Navbar />
+          <main>{children}</main></SessionProvider>
       </body>
     </html>
   );
 }
+
