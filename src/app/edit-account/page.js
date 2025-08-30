@@ -2,21 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import { fetchUserData } from "../../utils/accountActions";
 
 export default function EditAccountPage() {
     const [user, setUser] = useState(null);
-    const { data: session } = useSession();
+    const [reservations, setReservations] = useState([]); // ← AJOUTÉ : Pour fetchUserData
+    const { user: authUser, isAuthenticated, loading, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
     const router = useRouter();
     const [form, setForm] = useState({ name: "", phone: "" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
+    // ← CHANGÉ : Vérification d'authentification et récupération des données
     useEffect(() => {
-        if (session?.user?.email) {
+        if (!loading && !isAuthenticated) {
+            router.push('/login');
+            return;
+        }
+
+        if (isAuthenticated) {
+            // ← CHANGÉ : Plus besoin de passer l'email, fetchUserData utilise localStorage
             fetchUserData(
-                session.user.email,
                 (data) => {
                     setUser({
                         id: data.id,
@@ -29,10 +36,11 @@ export default function EditAccountPage() {
                         phone: data.phone || "",
                     });
                 },
+                setReservations, // ← AJOUTÉ : Paramètre requis pour fetchUserData
                 setError
             );
         }
-    }, [session]);
+    }, [isAuthenticated, loading, router]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,9 +51,12 @@ export default function EditAccountPage() {
         try {
             const res = await fetch("http://13.38.221.141:4000/api/edit-account", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
+                },
                 body: JSON.stringify({
-                    email: session.user.email,
+                    email: authUser.email, // ← CHANGÉ : Utilise authUser au lieu de session
                     name: form.name,
                     phone: form.phone,
                 }),
@@ -57,9 +68,21 @@ export default function EditAccountPage() {
             setError(err.message);
         }
     };
+
+    // ← AJOUTÉ : État de chargement
+    if (loading) {
+        return <p>Chargement...</p>;
+    }
+
+    // ← AJOUTÉ : Redirection si pas connecté
+    if (!isAuthenticated) {
+        return null;
+    }
+
     if (!user) {
         return <p>Chargement des informations utilisateur...</p>;
     }
+
     return (
         <div style={{ maxWidth: 400, margin: "0 auto", padding: 20 }}>
             <h1>Modifier mon compte</h1>
