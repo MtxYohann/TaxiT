@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import styles from "../styles/page.module.css";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Home() {
     const { user, loading, isAuthenticated } = useAuth();
