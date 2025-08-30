@@ -8,26 +8,37 @@ export default function AdminLayout({children}) {
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    // ← CHANGÉ : Attendre que le chargement soit fini
+    if (!loading) {
+      console.log("AdminLayout - Vérification:", { 
+        isAuthenticated, 
+        userRole: user?.role,
+        user: user 
+      });
 
-    console.log("AdminLayout - Vérification:", { isAuthenticated, userRole: user?.role });
-
-    if (!isAuthenticated || user?.role !== "admin") {
-      console.log("❌ Accès refusé, redirection...");
-      router.push("/unauthorized");
-    } else {
-      console.log("✅ Accès admin autorisé");
+      if (!isAuthenticated || user?.role !== "admin") {
+        console.log("❌ Accès refusé, redirection...");
+        router.push("/unauthorized");
+      } else {
+        console.log("✅ Accès admin autorisé pour:", user.name);
+      }
     }
-  }, [user, loading, isAuthenticated, router]);
+  }, [loading, isAuthenticated, user, router]); // ← CHANGÉ : Dépendances simplifiées
 
+  // ← CHANGÉ : Pendant le chargement
   if (loading) {
+    console.log("Layout admin en chargement...");
     return <p>Chargement...</p>;
   }
 
+  // ← CHANGÉ : Si pas admin après chargement
   if (!isAuthenticated || user?.role !== "admin") {
+    console.log("Layout admin - accès refusé");
     return <p>Redirection...</p>;
   }
 
+  // ← CHANGÉ : Succès !
+  console.log("Layout admin - affichage du contenu");
   return (
     <div>
       <main>{children}</main>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { isLoggedIn, getUser, getToken } from '../utils/auth';
 
 export const useAuth = () => {
@@ -23,22 +23,28 @@ export const useAuth = () => {
     refreshAuth();
   }, []);
 
-  // ← AJOUTÉ : Recalcule isAuthenticated en temps réel
-  const isAuthenticated = user !== null && isLoggedIn();
+  // ← CHANGÉ : useMemo pour éviter les re-calculs
+  const isAuthenticated = useMemo(() => {
+    return user !== null && isLoggedIn();
+  }, [user]);
 
-  console.log('🔍 useAuth state:', {
+  const token = useMemo(() => {
+    return getToken();
+  }, []);
+
+  console.log('🔍 useAuth state (une seule fois):', {
     user,
     userRole: user?.role,
     loading,
     isAuthenticated,
-    token: getToken() ? 'présent' : 'absent'
+    token: token ? 'présent' : 'absent'
   });
 
   return { 
     user, 
-    token: getToken(),
+    token,
     loading, 
-    isAuthenticated, // ← CHANGÉ : Utilise la variable calculée
-    refreshAuth // ← AJOUTÉ : Pour forcer le refresh si besoin
+    isAuthenticated,
+    refreshAuth
   };
 };
