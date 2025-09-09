@@ -71,9 +71,11 @@ const DriverDashboard = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
           "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
         },
         body: JSON.stringify({ status: action === "accept" ? "accepted" : "rejected" }),
+        mode: 'cors'
       });
 
       const result = await res.json();

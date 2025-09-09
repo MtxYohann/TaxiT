@@ -18,8 +18,9 @@ export default function RegisterPage() {
         try {
             const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
                 body: JSON.stringify({ email, password, name, phone }),
+                mode: 'cors'
             });
 
             if (!res.ok) {

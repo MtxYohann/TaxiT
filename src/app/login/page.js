@@ -13,8 +13,12 @@ export default function LoginPage() {
         try {
             const response = await fetch('http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email, password }),
+                mode: 'cors'
             });
 
             const data = await response.json();

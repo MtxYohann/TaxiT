@@ -120,9 +120,11 @@ export default function MapPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
             "Authorization": `Bearer ${token}`, // ← AJOUTÉ : Token d'authentification
           },
           body: JSON.stringify(reservationData),
+          mode: 'cors'
         });
 
         const result = await response.json();

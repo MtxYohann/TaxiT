@@ -46,10 +46,12 @@ function ChauffeursClientWrapper() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({
                     reservationId: parseInt(reservationId),
                 }),
+                mode: 'cors'
             });
 
             const result = await response.json();

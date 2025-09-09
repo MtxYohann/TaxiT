@@ -53,6 +53,7 @@ export default function EditAccountPage() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "Accept": "application/json",
                     "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
                 },
                 body: JSON.stringify({
@@ -60,6 +61,7 @@ export default function EditAccountPage() {
                     name: form.name,
                     phone: form.phone,
                 }),
+                mode: 'cors'
             });
             if (!res.ok) throw new Error("Erreur lors de la modification.");
             setSuccess("Compte modifié !");
