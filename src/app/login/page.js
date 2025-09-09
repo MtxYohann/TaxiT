@@ -11,7 +11,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://13.38.221.141:4000/api/login', {
+            const response = await fetch('http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -22,12 +22,12 @@ export default function LoginPage() {
 
             if (response.ok) {
                 console.log("Token reçu:", data.token);
-                
+
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     console.log("✅ Token sauvegardé");
                 }
-                
+
                 // 🔥 CORRECTION : Les données utilisateur sont directement dans data
                 const userData = {
                     id: data.id,
@@ -35,7 +35,7 @@ export default function LoginPage() {
                     name: data.name,
                     role: data.role
                 };
-                
+
                 localStorage.setItem('user', JSON.stringify(userData));
                 console.log("✅ User sauvegardé:", JSON.stringify(userData));
 
