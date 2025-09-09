@@ -5,7 +5,7 @@ import styles from "../styles/formulairedocuments.module.css";
 
 const handleRequestDriver = async (userId) => {
   try {
-    const response = await fetch(`http://13.38.221.141:4000/api/request-driver`, {
+    const response = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/request-driver`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export default function UploadDocumentsForm({ userId }) {
     formData.append("carte", carte);
 
     try {
-      const res = await fetch(`http://13.38.221.141:4000/api/upload-documents/${userId}`, {
+      const res = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/upload-documents/${userId}`, {
         method: "POST",
         body: formData,
       });

@@ -6,22 +6,22 @@ export const fetchUserData = async (setUser, setReservations, setError) => {
         // Récupérer l'utilisateur depuis localStorage
         const userData = getUser();
         const token = getToken();
-        
+
         if (!userData || !token) {
             throw new Error("Utilisateur non connecté");
         }
-        
+
         console.log("Données utilisateur depuis localStorage :", userData);
         setUser(userData);
 
         // Récupérer les réservations avec le token
-        const resResa = await fetch(`http://13.38.221.141:4000/api/reservations/${userData.id}`, {
+        const resResa = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/${userData.id}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             }
         });
-        
+
         if (!resResa.ok) throw new Error("Impossible de récupérer les réservations.");
         const reservationsData = await resResa.json();
         console.log("Données réservations :", reservationsData);
@@ -38,14 +38,14 @@ export const deleteAccount = async (router, setError) => {
         try {
             const userData = getUser();
             const token = getToken();
-            
+
             if (!userData || !token) {
                 throw new Error("Utilisateur non connecté");
             }
 
-            const res = await fetch("http://13.38.221.141:4000/api/delete", {
+            const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/delete", {
                 method: "DELETE",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
@@ -59,7 +59,7 @@ export const deleteAccount = async (router, setError) => {
             // Nettoyer le localStorage après suppression
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            
+
             alert("Compte supprimé avec succès.");
             router.push("/register");
         } catch (err) {

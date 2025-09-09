@@ -12,7 +12,7 @@ const handler = NextAuth({
             async authorize(credentials) {
                 const { email, password } = credentials;
                 console.log("Données envoyées à l'API backend :", { email, password });
-                const res = await fetch("http://13.38.221.141:4000/api/login", {
+                const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password }),

@@ -16,7 +16,7 @@ export default function RegisterPage() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://10.0.1.191:4000/api/register", {
+            const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, name, phone }),

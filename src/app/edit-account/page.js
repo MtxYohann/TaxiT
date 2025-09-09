@@ -49,9 +49,9 @@ export default function EditAccountPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://13.38.221.141:4000/api/edit-account", {
+            const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/edit-account", {
                 method: "PUT",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
                 },

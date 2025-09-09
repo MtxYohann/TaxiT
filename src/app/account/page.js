@@ -126,9 +126,9 @@ export default function AccountPage() {
                     style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
                     onClick={async () => {
                         // ← CHANGÉ : Ajoute le token d'authentification
-                        const res = await fetch("http://13.38.221.141:4000/api/subscription/cancel-subscription", {
+                        const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/subscription/cancel-subscription", {
                             method: "POST",
-                            headers: { 
+                            headers: {
                                 "Content-Type": "application/json",
                                 "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token
                             },

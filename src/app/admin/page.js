@@ -5,53 +5,53 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const handleDelete = async (email, token) => { // ← AJOUTÉ : token en paramètre
-    if (!confirm(`Supprimer ${email} ?`)) return;
-  
-    try {
-      const res = await fetch("http://13.38.221.141:4000/api/delete", {
-        method: "DELETE",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
-        },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      alert(data.message);
-      window.location.reload();
-    } catch (error) {
-      console.error("Erreur suppression :", error);
-      alert("Erreur lors de la suppression.");
-    }
-  };
-  
-  const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
-    const newName = prompt("Nouveau nom :", user.name);
-    const newPhone = prompt("Nouveau téléphone :", user.phone);
-  
-    if (!newName && !newPhone) return;
-  
-    try {
-      const res = await fetch("http://13.38.221.141:4000/api/edit-account", {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
-        },
-        body: JSON.stringify({
-          email: user.email,
-          name: newName || user.name,
-          phone: newPhone || user.phone,
-        }),
-      });
-      const data = await res.json();
-      alert(data.message);
-      window.location.reload();
-    } catch (error) {
-      console.error("Erreur édition :", error);
-      alert("Erreur lors de la modification.");
-    }
-  };
+  if (!confirm(`Supprimer ${email} ?`)) return;
+
+  try {
+    const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
+      },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    alert(data.message);
+    window.location.reload();
+  } catch (error) {
+    console.error("Erreur suppression :", error);
+    alert("Erreur lors de la suppression.");
+  }
+};
+
+const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
+  const newName = prompt("Nouveau nom :", user.name);
+  const newPhone = prompt("Nouveau téléphone :", user.phone);
+
+  if (!newName && !newPhone) return;
+
+  try {
+    const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/edit-account", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
+      },
+      body: JSON.stringify({
+        email: user.email,
+        name: newName || user.name,
+        phone: newPhone || user.phone,
+      }),
+    });
+    const data = await res.json();
+    alert(data.message);
+    window.location.reload();
+  } catch (error) {
+    console.error("Erreur édition :", error);
+    alert("Erreur lors de la modification.");
+  }
+};
 
 export default function AdminPage() {
   const { user, loading, isAuthenticated, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
@@ -71,7 +71,7 @@ export default function AdminPage() {
     const fetchUsers = async () => {
       if (selectedModule === "users") {
         try {
-          const res = await fetch("http://13.38.221.141:4000/api/users", {
+          const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();
@@ -83,7 +83,7 @@ export default function AdminPage() {
       }
       if (selectedModule === "chauffeurs") {
         try {
-          const res = await fetch("http://13.38.221.141:4000/api/users", {
+          const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();
@@ -92,10 +92,10 @@ export default function AdminPage() {
         } catch (error) {
           console.error("Erreur lors de la récupération des utilisateurs :", error);
         }
-    }
-    if (selectedModule === "verif-chauffeurs") {
+      }
+      if (selectedModule === "verif-chauffeurs") {
         try {
-          const res = await fetch("http://13.38.221.141:4000/api/users", {
+          const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();
@@ -105,7 +105,7 @@ export default function AdminPage() {
         } catch (error) {
           console.error("Erreur lors de la récupération des utilisateurs :", error);
         }
-    }
+      }
     };
 
     // ← AJOUTÉ : Vérifier qu'on a un token avant de fetch
@@ -120,10 +120,10 @@ export default function AdminPage() {
     switch (selectedModule) {
       case "dashboard":
         return <p>Bienvenue dans le tableau de bord admin.</p>;
-        
+
       case "users":
         return (
-            <div>
+          <div>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>👥</span> Utilisateurs (role: "user")
             </h2>
@@ -188,7 +188,7 @@ export default function AdminPage() {
 
       case "chauffeurs":
         return (
-            <div>
+          <div>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>🚖</span> Chauffeurs (role: "driver")
             </h2>
@@ -254,7 +254,7 @@ export default function AdminPage() {
 
       case "verif-chauffeurs":
         return (
-            <div>
+          <div>
             <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
               <span>⏳</span> Demandes de chauffeurs
             </h2>
@@ -289,7 +289,7 @@ export default function AdminPage() {
                         onClick={async () => {
                           // Approuver la demande chauffeur
                           try {
-                            const res = await fetch(`http://13.38.221.141:4000/api/approve-driver/${userItem.id}`, { // ← CHANGÉ : ID dans l'URL
+                            const res = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/approve-driver/${userItem.id}`, { // ← CHANGÉ : ID dans l'URL
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
@@ -349,7 +349,7 @@ export default function AdminPage() {
             )}
           </div>
         );
-      
+
       default:
         return <p>Sélectionnez un module.</p>;
     }

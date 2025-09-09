@@ -1,21 +1,21 @@
 export const calculerTarif = async (distance, duration, dateTime) => {
-    try {
-      const response = await fetch("http://13.38.221.141:4000/api/calculer-tarif", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ distance, duration, dateTime }),
-      });
-  
-      if (!response.ok) {
-        throw new Error("Failed to calculate fare");
-      }
-  
-      const data = await response.json();
-      return data.fare;
-    } catch (error) {
-      console.error(error);
-      throw error;
+  try {
+    const response = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/calculer-tarif", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ distance, duration, dateTime }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to calculate fare");
     }
-  };
+
+    const data = await response.json();
+    return data.fare;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

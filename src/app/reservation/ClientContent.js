@@ -20,7 +20,7 @@ function ChauffeursClientWrapper() {
         const fetchChauffeurs = async () => {
             try {
                 setLoading(true);
-                const response = await fetch("http://13.38.221.141:4000/api/chauffeurs-disponibles");
+                const response = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/chauffeurs-disponibles");
                 if (!response.ok) {
                     throw new Error("Échec de la récupération des chauffeurs.");
                 }
@@ -42,7 +42,7 @@ function ChauffeursClientWrapper() {
         }
 
         try {
-            const response = await fetch(`http://13.38.221.141:4000/api/reservations/${chauffeurId}`, {
+            const response = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/${chauffeurId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

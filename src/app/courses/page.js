@@ -19,7 +19,7 @@ const DriverDashboard = () => {
     if (!chauffeurId) return;
     setOrdersLoading(true);
 
-    let url = `http://13.38.221.141:4000/api/reservations/driver/${chauffeurId}`;
+    let url = `http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/driver/${chauffeurId}`;
     if (selectedTab === "future") url += "?status=accepted&upcoming=true";
     else if (selectedTab === "history") url += "?history=true";
 
@@ -67,9 +67,9 @@ const DriverDashboard = () => {
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
-      const res = await fetch(`http://13.38.221.141:4000/api/reservations/${reservationId}/status`, {
+      const res = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/${reservationId}/status`, {
         method: "PUT",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
         },
@@ -97,7 +97,7 @@ const DriverDashboard = () => {
         {orders.map((order) => (
           <li
             key={order.id}
-            onClick={() => router.push(`/courses/detail/${order.id}`)} 
+            onClick={() => router.push(`/courses/detail/${order.id}`)}
             style={{
               background: "#fff9e5",
               border: "1px solid #f0dfaa",

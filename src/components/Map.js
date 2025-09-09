@@ -116,7 +116,7 @@ export default function MapPage() {
         clientId: user?.id, // ← CHANGÉ : Utilise user du hook
       };
       try {
-        const response = await fetch("http://13.38.221.141:4000/api/reservations/add-reservation", {
+        const response = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/add-reservation", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
