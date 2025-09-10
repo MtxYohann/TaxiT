@@ -6,7 +6,7 @@ import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from 
 import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
-import ReviewButton from "../../components/ReviewButton";
+import ReviewButton from "../../components/reviewButton";
 import styles from "../../styles/Account.module.css";
 
 export default function AccountPage() {
