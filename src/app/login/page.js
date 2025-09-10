@@ -32,17 +32,9 @@ export default function LoginPage() {
                     console.log("✅ Token sauvegardé");
                 }
 
-                // 🔥 CORRECTION : Les données utilisateur sont directement dans data
-                const userData = {
-                    id: data.id,
-                    email: data.email,
-                    name: data.name,
-                    role: data.role,
-                    phone: data.phone
-                };
-
-                localStorage.setItem('user', JSON.stringify(userData));
-                console.log("✅ User sauvegardé:", JSON.stringify(userData));
+                // Sauvegarde directe de toutes les données utilisateur
+                localStorage.setItem('user', JSON.stringify(data));
+                console.log("✅ User sauvegardé:", JSON.stringify(data));
 
                 // Vérification
                 console.log("🔍 Vérification localStorage:");
