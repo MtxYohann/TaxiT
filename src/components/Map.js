@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
+import { createLocalDateTime } from "../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
 import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 
@@ -79,7 +80,7 @@ export default function MapPage() {
             setDirections(result);
             const distance = result.routes[0].legs[0].distance.value / 1000;
             const duration = result.routes[0].legs[0].duration.value / 60;
-            const dateTime = `${date}T${time}`;
+            const dateTime = createLocalDateTime(date, time); // ← CHANGÉ : Utilise la fonction utilitaire
             console.log(`Date: ${dateTime}`);
             console.log(`Distance: ${distance} km`);
             if (!date || !time) {
@@ -112,7 +113,7 @@ export default function MapPage() {
         dropoffLat: dropoff.lat,
         dropoffLng: dropoff.lng,
         fare: parseFloat(tarif),
-        dateTime: `${date}T${time}`,
+        dateTime: createLocalDateTime(date, time), // ← CHANGÉ : Utilise la fonction utilitaire
         clientId: user?.id, // ← CHANGÉ : Utilise user du hook
       };
       try {

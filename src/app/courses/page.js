@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { formatLocalDateTime } from "../../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
 import { getAddressFromCoords } from "@/src/utils/accountActions";
 import { useRouter } from "next/navigation";
 
@@ -117,7 +118,7 @@ const DriverDashboard = () => {
               🚘 Commande #{order.id}
             </h3>
             <p><strong>👤 Client :</strong> {order.client?.name || "N/A"}</p>
-            <p><strong>📅 Date :</strong> {new Date(order.dateTime).toLocaleString()}</p>
+            <p><strong>📅 Date :</strong> {formatLocalDateTime(order.dateTime)}</p>
             <p><strong>📍 Départ :</strong> {pickupAddresses[order.id] || "Chargement..."}</p>
             <p><strong>🏁 Arrivée :</strong> {dropoffAddresses[order.id] || "Chargement..."}</p>
             <p><strong>💸 Tarif :</strong> {order.fare} €</p>

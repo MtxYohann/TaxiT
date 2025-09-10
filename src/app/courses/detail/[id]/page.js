@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { GoogleMap, DirectionsRenderer, useJsApiLoader } from "@react-google-maps/api";
+import { formatLocalDateTime } from "../../../../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
 
 export default function OrderDetail() {
   const { id } = useParams();
@@ -98,7 +99,7 @@ export default function OrderDetail() {
         </p>
         <p>
           <strong>📅 Date :</strong>{" "}
-          {order.dateTime ? new Date(order.dateTime).toLocaleString() : "N/A"}
+          {order.dateTime ? formatLocalDateTime(order.dateTime) : "N/A"}
         </p>
         <p>
           <strong>💸 Tarif :</strong> {order.fare ? `${order.fare} €` : "N/A"}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from "../../utils/accountActions";
 import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { formatLocalDateTime } from "../../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
 import ReviewButton from "../../components/reviewButton";
@@ -158,7 +159,7 @@ export default function AccountPage() {
                             {upcoming.map(r => (
                                 <li key={r.id} className={styles.reservationItem}>
                                     <div className={styles.reservationDate}>
-                                        {new Date(r.dateTime).toLocaleString()}
+                                        {formatLocalDateTime(r.dateTime)}
                                     </div>
                                     <div className={styles.reservationInfo}>
                                         <span>Départ :</span>
@@ -187,7 +188,7 @@ export default function AccountPage() {
                             {past.map(r => (
                                 <li key={r.id} className={styles.reservationItem}>
                                     <div className={styles.reservationDatePast}>
-                                        {new Date(r.dateTime).toLocaleString()}
+                                        {formatLocalDateTime(r.dateTime)}
                                     </div>
                                     <div className={styles.reservationInfo}>
                                         <span>Départ :</span>
