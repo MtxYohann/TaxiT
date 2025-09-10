@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from '../../styles/chauffeur.module.css';
+import DriverRating from "../../components/DriverRating";
 
 function ChauffeursClientWrapper() {
     const [chauffeurs, setChauffeurs] = useState([]);
@@ -81,6 +82,7 @@ function ChauffeursClientWrapper() {
                                     Prénom : <span className={styles.chauffeur_name}>{chauffeur.name}</span><br />
                                     Numéro de téléphone : <span className={styles.chauffeu_phone}>{chauffeur.phone}</span>
                                 </div>
+                                <DriverRating driverId={chauffeur.id} />
                                 <button
                                     className={styles.reserve_button}
                                     onClick={() => handleReservation(chauffeur.id)}

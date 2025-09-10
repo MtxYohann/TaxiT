@@ -6,6 +6,7 @@ import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from 
 import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
+import ReviewButton from "../../components/ReviewButton";
 import styles from "../../styles/Account.module.css";
 
 export default function AccountPage() {
@@ -130,9 +131,11 @@ export default function AccountPage() {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token
+                                "Accept": "application/json",
+                                "Authorization": `Bearer ${token}`
                             },
                             body: JSON.stringify({ email: user.email }),
+                            mode: 'cors'
                         });
                         const data = await res.json();
                         if (data.success) {
@@ -197,6 +200,9 @@ export default function AccountPage() {
                                     <div className={styles.reservationInfo}>
                                         Prix de la course : <span className={styles.reservationFare}>{r.fare} €</span>
                                     </div>
+                                    {r.driverId && (
+                                        <ReviewButton driverId={r.driverId} reservationId={r.id} />
+                                    )}
                                 </li>
                             ))}
                         </ul>
