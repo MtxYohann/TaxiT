@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
@@ -172,113 +172,110 @@ export default function MapPage() {
   }
 
   return (
-    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-      <div style={{ display: "flex", height: "100vh", overflow: "hidden", padding: "20px" }}>
-        {/* Conteneur de la carte */}
-        <div
-          style={{
-            flex: 2,
-            position: "relative",
-            borderRadius: "15px",
-            overflow: "hidden",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            margin: "10px",
-            maxHeight: "80vh",
-          }}
-        >
-          <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10} options={mapOtions}>
-            {pickup && <Marker position={pickup} />}
-            {dropoff && <Marker position={dropoff} />}
-            {directions && <DirectionsRenderer directions={directions} />}
-          </GoogleMap>
-        </div>
-
-        {/* Formulaire pour saisir les lieux */}
-        <div
-          style={{
-            flex: 1,
-            padding: "20px",
-            overflowY: "auto",
-            zIndex: 1,
-            position: "relative",
-            backgroundColor: "white",
-            borderRadius: "15px",
-            height: "75vh",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            margin: "10px",
-          }}
-        >
-          <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)} options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}>
-            <input
-              type="text"
-              placeholder="Entrée un point de départ"
-              style={{
-                width: "90%",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </Autocomplete>
-          <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)} options={{ componentRestrictions: componentRestrictions }}>
-            <input
-              type="text"
-              placeholder="Entrée un point de d'arrivée"
-              style={{
-                width: "90%",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </Autocomplete>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
-
-          <button
-            onClick={handleCalculateRoute}
-            style={{
-              width: "95%",
-              padding: "10px",
-              backgroundColor: "#007BFF",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              marginBottom: "10px",
-            }}
-          >
-            Estimer le prix
-          </button>
-          {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: {tarif}€</p>}
-          <button
-            onClick={handleReservation}
-            style={{
-              width: "95%",
-              padding: "10px",
-              backgroundColor: "#007BFF",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Reserver une course
-          </button>
-        </div>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", padding: "20px" }}>
+      {/* Conteneur de la carte */}
+      <div
+        style={{
+          flex: 2,
+          position: "relative",
+          borderRadius: "15px",
+          overflow: "hidden",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          margin: "10px",
+          maxHeight: "80vh",
+        }}
+      >
+        <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10} options={mapOtions}>
+          {pickup && <Marker position={pickup} />}
+          {dropoff && <Marker position={dropoff} />}
+          {directions && <DirectionsRenderer directions={directions} />}
+        </GoogleMap>
       </div>
 
+      {/* Formulaire pour saisir les lieux */}
+      <div
+        style={{
+          flex: 1,
+          padding: "20px",
+          overflowY: "auto",
+          zIndex: 1,
+          position: "relative",
+          backgroundColor: "white",
+          borderRadius: "15px",
+          height: "75vh",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          margin: "10px",
+        }}
+      >
+        <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)} options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}>
+          <input
+            type="text"
+            placeholder="Entrée un point de départ"
+            style={{
+              width: "90%",
+              marginBottom: "10px",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </Autocomplete>
+        <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)} options={{ componentRestrictions: componentRestrictions }}>
+          <input
+            type="text"
+            placeholder="Entrée un point de d'arrivée"
+            style={{
+              width: "90%",
+              marginBottom: "10px",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </Autocomplete>
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
+        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
+
+        <button
+          onClick={handleCalculateRoute}
+          style={{
+            width: "95%",
+            padding: "10px",
+            backgroundColor: "#007BFF",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginBottom: "10px",
+          }}
+        >
+          Estimer le prix
+        </button>
+        {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: {tarif}€</p>}
+        <button
+          onClick={handleReservation}
+          style={{
+            width: "95%",
+            padding: "10px",
+            backgroundColor: "#007BFF",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Reserver une course
+        </button>
+      </div>
       {/* Styles globaux */}
       <style jsx global>{`
-        body {
-          margin: 0;
-          height: 100vh;
-          overflow: hidden;
-          font-family: Arial, sans-serif;
-        }
-      `}</style>
-    </LoadScript>
+      body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+    `}</style>
+    </div>
   );
 }
