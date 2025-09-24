@@ -8,7 +8,7 @@ import DriverRating from "../../components/DriverRating";
 function ChauffeursClientWrapper() {
     const [chauffeurs, setChauffeurs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(""); // ← AJOUTÉ
+    const [error, setError] = useState("");
     const searchParams = useSearchParams();
     const reservationId = searchParams.get("reservationId");
 
@@ -22,7 +22,7 @@ function ChauffeursClientWrapper() {
         const fetchChauffeurs = async () => {
             try {
                 setLoading(true);
-                setError(""); // ← AJOUTÉ
+                setError("");
 
                 const response = await fetch("/api/chauffeurs-disponibles", {
                     method: "GET",
@@ -30,7 +30,7 @@ function ChauffeursClientWrapper() {
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
-                    credentials: 'include' // ← AJOUTÉ : Pour les cookies httpOnly
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {
@@ -43,7 +43,7 @@ function ChauffeursClientWrapper() {
                 }
 
                 const data = await response.json();
-                console.log("Chauffeurs récupérés:", data); // ← AJOUTÉ : Debug
+                console.log("Chauffeurs récupérés:", data);
                 setChauffeurs(data);
             } catch (error) {
                 console.error("Erreur fetch chauffeurs:", error);
@@ -69,7 +69,7 @@ function ChauffeursClientWrapper() {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                credentials: 'include', // ← AJOUTÉ : Pour les cookies httpOnly
+                credentials: 'include',
                 body: JSON.stringify({
                     reservationId: parseInt(reservationId),
                 })
