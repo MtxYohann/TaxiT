@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { useAuth } from "../hooks/useAuth";
 import styles from "../styles/Subscription.module.css";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -49,7 +50,6 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                     "Accept": "application/json"
                 },
                 body: JSON.stringify({
-                    email,
                     paymentMethodId: paymentMethod.id,
                     priceId
                 }),
@@ -59,6 +59,12 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
             const data = await res.json();
 
             if (!res.ok) {
+                if (res.status === 401) {
+                    setMessage("❌ Session expirée. Redirection vers la connexion...");
+                    setTimeout(() => window.location.href = '/login', 2000);
+                    setLoading(false);
+                    return;
+                }
                 throw new Error(data.error?.message || "Erreur lors de la création de l'abonnement");
             }
 
@@ -73,13 +79,6 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
         } catch (error) {
             console.error("Erreur lors de l'abonnement:", error);
             setMessage(error.message || "Erreur de connexion. Veuillez réessayer.");
-
-            if (error.message.includes('401') || error.message.includes('unauthorized')) {
-                setMessage("Session expirée. Veuillez vous reconnecter.");
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 2000);
-            }
         } finally {
             setLoading(false);
         }
@@ -176,7 +175,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                 }}>
                     <p><strong>ℹ️ Informations importantes :</strong></p>
                     <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
-                        <li>Abonnement mensuel de 10€</li>
+                        <li>Abonnement mensuel de 29€</li>
                         <li>Accès complet à la plateforme chauffeur</li>
                         <li>Annulation possible à tout moment</li>
                         <li>Paiement sécurisé par Stripe</li>
