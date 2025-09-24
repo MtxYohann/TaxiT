@@ -71,7 +71,7 @@ export default function DriverRating({ driverId }) {
                         marginRight: "2px"
                     }}
                 >
-                    ⭐
+                    🚗
                 </span>
             ))}
             <span style={{ marginLeft: "8px", color: "#666", fontSize: "0.9em" }}>
