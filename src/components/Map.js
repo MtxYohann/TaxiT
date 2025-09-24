@@ -88,9 +88,10 @@ export default function MapPage() {
             }
             try {
               const tarifCalculer = await calculerTarif(distance, duration, dateTime);
-              setTarif(tarifCalculer);
+              setTarif(parseFloat(tarifCalculer));
             } catch (error) {
               console.error("Impossible de calculer le tarif du trajet", error);
+              setTarif("Erreur lors du calcul du tarif");
             }
           } else {
             console.error(`Error fetching directions: ${result}`);
