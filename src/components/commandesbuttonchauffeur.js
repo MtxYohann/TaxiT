@@ -1,17 +1,17 @@
 "use client";
-import { useSession } from "next-auth/react";
+
+import { useAuth } from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function CommandeChauffeurBouton() {
-  const { data: session, status } = useSession();
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // ⏳ Attente de chargement de la session
-  if (status === "loading") return null;
+  // ⏳ Attente de chargement
+  if (loading) return null;
 
-  // ❌ Pas de session ou pas admin → on n'affiche rien
-  if (!session || session.user?.role !== "driver") return null;
-
+  // ❌ Pas connecté ou pas chauffeur → on n’affiche rien
+  if (!isAuthenticated || user?.role !== "driver") return null;
 
   return (
     <button
