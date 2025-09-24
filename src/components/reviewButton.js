@@ -18,7 +18,7 @@ export default function ReviewButton({ driverId, reservationId }) {
             setMessage("Vous devez être connecté pour laisser un avis.");
             return;
         }
-        const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reviews", {
+        const res = await fetch("/api/reviews", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

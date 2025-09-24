@@ -20,7 +20,7 @@ const DriverDashboard = () => {
     if (!chauffeurId) return;
     setOrdersLoading(true);
 
-    let url = `http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/driver/${chauffeurId}`;
+    let url = `/api/reservations/driver/${chauffeurId}`;
     if (selectedTab === "future") url += "?status=accepted&upcoming=true";
     else if (selectedTab === "history") url += "?history=true";
 
@@ -68,7 +68,7 @@ const DriverDashboard = () => {
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
-      const res = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reservations/${reservationId}/status`, {
+      const res = await fetch(`/api/reservations/${reservationId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

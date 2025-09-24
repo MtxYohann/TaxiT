@@ -6,7 +6,7 @@ export default function DriverRating({ driverId }) {
 
     useEffect(() => {
         async function fetchRating() {
-            const res = await fetch(`http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/reviews/driver/${driverId}`, {
+            const res = await fetch(`/api/reviews/driver/${driverId}`, {
                 method: "GET",
                 headers: {
                     "Accept": "application/json"

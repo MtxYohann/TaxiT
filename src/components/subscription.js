@@ -26,7 +26,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
             return;
         }
 
-        const res = await fetch("http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/subscription/create-subscription", {
+        const res = await fetch("/api/subscription/create-subscription", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
