@@ -110,8 +110,7 @@ export default function MapPage() {
         dropoffLat: dropoff.lat,
         dropoffLng: dropoff.lng,
         fare: parseFloat(tarif),
-        dateTime: createLocalDateTime(date, time),
-        clientId: user?.id,
+        dateTime: createLocalDateTime(date, time)
       };
       try {
         const response = await fetch("/api/reservations/add-reservation", {
