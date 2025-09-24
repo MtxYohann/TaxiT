@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import Navbar from "../components/Navbar"
 import Head from "next/head";
-import { SessionProvider } from "next-auth/react";
 import { LoadScript } from "@react-google-maps/api";
 
 const geistSans = Geist({
@@ -29,10 +28,8 @@ export default function RootLayout({ children }) {
           googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
           libraries={["places"]}
         >
-          <SessionProvider>
             <Navbar />
             <main>{children}</main>
-          </SessionProvider>
         </LoadScript>
       </body>
     </html>
