@@ -43,7 +43,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                 return;
             }
 
-            const res = await fetch("/api/subscription/create-subscription", {
+            const res = await fetch("/api/create-subscription", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -96,7 +96,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                         📧 <strong>Email :</strong> {email}
                     </p>
                     <p style={{ color: "#666", fontSize: "14px" }}>
-                        💰 <strong>Prix :</strong> 29€/mois
+                        💰 <strong>Prix :</strong> 10€/mois
                     </p>
                 </div>
 
@@ -149,7 +149,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                         transition: "background-color 0.3s ease"
                     }}
                 >
-                    {loading ? "⏳ Abonnement en cours..." : "🚀 S'abonner (29€/mois)"}
+                    {loading ? "⏳ Abonnement en cours..." : "🚀 S'abonner (10€/mois)"}
                 </button>
 
                 {message && (
