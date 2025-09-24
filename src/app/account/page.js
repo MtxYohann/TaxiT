@@ -34,7 +34,6 @@ export default function AccountPage() {
                     const resResa = await fetch(`/api/reservations/${authUser.id}`, {
                         method: 'GET',
                         credentials: 'include',
-                        mode: 'cors',
                         headers: {
                             "Content-Type": "application/json"
                         }
@@ -154,8 +153,7 @@ export default function AccountPage() {
                                 "Content-Type": "application/json",
                                 "Accept": "application/json"
                             },
-                            credentials: 'include',
-                            mode: 'cors'
+                            credentials: 'include'
                         });
                         const data = await res.json();
                         if (data.success) {

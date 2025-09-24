@@ -12,7 +12,6 @@ export default function Home() {
             // ← MODIFIÉ : Appel à une route de déconnexion côté serveur
             await fetch('/api/logout', {
                 method: 'POST',
-                mode: 'cors',
                 credentials: 'include'
             });
 

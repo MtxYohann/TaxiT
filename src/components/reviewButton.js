@@ -25,8 +25,7 @@ export default function ReviewButton({ driverId, reservationId }) {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ authorId, driverId, rating, comment }),
-            mode: 'cors'
+            body: JSON.stringify({ authorId, driverId, rating, comment })
         });
         const data = await res.json();
         if (data.error) {

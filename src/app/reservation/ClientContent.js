@@ -51,8 +51,7 @@ function ChauffeursClientWrapper() {
                 },
                 body: JSON.stringify({
                     reservationId: parseInt(reservationId),
-                }),
-                mode: 'cors'
+                })
             });
 
             const result = await response.json();

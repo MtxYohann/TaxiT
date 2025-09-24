@@ -12,7 +12,6 @@ export const useAuth = () => {
 
       const response = await fetch('/api/me', {
         method: 'GET',
-        mode: 'cors',
         credentials: 'include'
       });
 

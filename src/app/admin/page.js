@@ -14,7 +14,6 @@ const handleDelete = async (email) => {
         "Content-Type": "application/json",
       },
       credentials: 'include',
-      mode: 'cors',
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
@@ -39,7 +38,6 @@ const handleEdit = async (user) => {
         "Content-Type": "application/json",
       },
       credentials: 'include',
-      mode: 'cors',
       body: JSON.stringify({
         email: user.email,
         name: newName || user.name,
@@ -75,7 +73,6 @@ export default function AdminPage() {
         try {
           const res = await fetch("/api/users", {
             credentials: 'include',
-            mode: 'cors'
           });
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "user");
@@ -87,8 +84,7 @@ export default function AdminPage() {
       if (selectedModule === "chauffeurs") {
         try {
           const res = await fetch("/api/users", {
-            credentials: 'include',
-            mode: 'cors'
+            credentials: 'include'
           });
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "driver");
@@ -100,8 +96,7 @@ export default function AdminPage() {
       if (selectedModule === "verif-chauffeurs") {
         try {
           const res = await fetch("/api/users", {
-            credentials: 'include',
-            mode: 'cors'
+            credentials: 'include'
           });
           const data = await res.json();
           console.log("Données récupérées :", data);
@@ -299,7 +294,6 @@ export default function AdminPage() {
                                 "Content-Type": "application/json",
                               },
                               credentials: 'include',
-                              mode: 'cors',
                               body: JSON.stringify({ approve: true })
                             });
                             const data = await res.json();

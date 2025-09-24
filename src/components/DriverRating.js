@@ -10,8 +10,7 @@ export default function DriverRating({ driverId }) {
                 method: "GET",
                 headers: {
                     "Accept": "application/json"
-                },
-                mode: 'cors'
+                }
             });
             const data = await res.json();
             setAverage(data.average);

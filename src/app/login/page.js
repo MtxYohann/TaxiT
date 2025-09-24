@@ -18,7 +18,6 @@ export default function LoginPage() {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ email, password }),
-                mode: 'cors',
                 credentials: 'include'
             });
 
