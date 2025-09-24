@@ -18,29 +18,14 @@ export default function LoginPage() {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ email, password }),
-                mode: 'cors'
+                mode: 'cors',
+                credentials: 'include'
             });
 
             const data = await response.json();
             console.log("Réponse complète du serveur:", data);
 
             if (response.ok) {
-                console.log("Token reçu:", data.token);
-
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
-                    console.log("✅ Token sauvegardé");
-                }
-
-                // Sauvegarde directe de toutes les données utilisateur
-                localStorage.setItem('user', JSON.stringify(data));
-                console.log("✅ User sauvegardé:", JSON.stringify(data));
-
-                // Vérification
-                console.log("🔍 Vérification localStorage:");
-                console.log("Token dans localStorage:", localStorage.getItem('token'));
-                console.log("User dans localStorage:", localStorage.getItem('user'));
-
                 console.log("Connexion réussie");
                 window.location.href = "/";
             } else {
