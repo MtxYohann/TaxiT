@@ -1,20 +1,34 @@
 import { useState, useEffect, useMemo } from 'react';
-import { isLoggedIn, getUser, getToken } from '../utils/auth';
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshAuth = () => {
+  const refreshAuth = async () => {
     console.log('🔄 Refresh auth...');
-    if (isLoggedIn()) {
-      const userData = getUser();
-      console.log('✅ User récupéré:', userData);
-      setUser(userData);
-    } else {
-      console.log('❌ Pas connecté');
+    setLoading(true);
+
+    try {
+
+      const response = await fetch('/api/me', {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('✅ User récupéré:', userData);
+        setUser(userData);
+      } else {
+        console.log('❌ Pas connecté ou session expirée');
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification auth:', error);
       setUser(null);
     }
+
     setLoading(false);
   };
 
@@ -23,27 +37,20 @@ export const useAuth = () => {
     refreshAuth();
   }, []);
 
-  // ← CHANGÉ : useMemo pour éviter les re-calculs
   const isAuthenticated = useMemo(() => {
-    return user !== null && isLoggedIn();
+    return user !== null;
   }, [user]);
 
-  const token = useMemo(() => {
-    return getToken();
-  }, []);
-
-  console.log('🔍 useAuth state (une seule fois):', {
+  console.log('🔍 useAuth state:', {
     user,
     userRole: user?.role,
     loading,
-    isAuthenticated,
-    token: token ? 'présent' : 'absent'
+    isAuthenticated
   });
 
-  return { 
-    user, 
-    token,
-    loading, 
+  return {
+    user,
+    loading,
     isAuthenticated,
     refreshAuth
   };

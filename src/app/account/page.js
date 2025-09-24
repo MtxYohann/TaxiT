@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchUserData, deleteAccount, editAccount, getAddressFromCoords } from "../../utils/accountActions";
-import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
-import { formatLocalDateTime } from "../../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
+import { fetchUserData, deleteAccount, getAddressFromCoords } from "../../utils/accountActions";
+import { useAuth } from "../../hooks/useAuth";
+import { formatLocalDateTime } from "../../utils/dateUtils";
 import Adminbutton from "../../components/adminbutton";
 import CommandeChauffeurBouton from "../../components/commandesbuttonchauffeur";
 import ReviewButton from "../../components/reviewButton";
@@ -17,20 +17,41 @@ export default function AccountPage() {
     const router = useRouter();
     const [pickupAddresses, setPickupAddresses] = useState({});
     const [dropoffAddresses, setDropoffAddresses] = useState({});
-    const { user: authUser, isAuthenticated, loading, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
+    const { user: authUser, isAuthenticated, loading } = useAuth();
 
-    // ← CHANGÉ : Vérification d'authentification et récupération des données
     useEffect(() => {
         if (!loading && !isAuthenticated) {
             router.push('/login');
             return;
         }
 
-        if (isAuthenticated) {
-            // Plus besoin de passer l'email, fetchUserData utilise maintenant localStorage
-            fetchUserData(setUser, setReservations, setError);
+        if (isAuthenticated && authUser) {
+            setUser(authUser);
+
+
+            const fetchReservations = async () => {
+                try {
+                    const resResa = await fetch(`/api/reservations/${authUser.id}`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        mode: 'cors',
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (!resResa.ok) throw new Error("Impossible de récupérer les réservations.");
+                    const reservationsData = await resResa.json();
+                    console.log("Données réservations :", reservationsData);
+                    setReservations(reservationsData);
+                } catch (err) {
+                    setError(err.message);
+                }
+            };
+
+            fetchReservations();
         }
-    }, [isAuthenticated, loading, router]);
+    }, [isAuthenticated, loading, router, authUser]);
 
     useEffect(() => {
         async function fetchAddresses() {
@@ -50,12 +71,10 @@ export default function AccountPage() {
         if (reservations.length > 0) fetchAddresses();
     }, [reservations]);
 
-    // ← AJOUTÉ : État de chargement
     if (loading) {
         return <p>Chargement...</p>;
     }
 
-    // ← AJOUTÉ : Redirection si pas connecté
     if (!isAuthenticated) {
         return null;
     }
@@ -99,15 +118,16 @@ export default function AccountPage() {
                 )}
             </div>
             <button
-                onClick={() => editAccount(router)}
+                onClick={() => router.push("/edit-account")}
                 className={styles.button}
+                style={{ borderRadius: "8px" }}
             >
                 Modifier les informations
             </button>
             <button
-                onClick={() => deleteAccount(router, setError)} // ← CHANGÉ : Plus besoin de passer l'email
+                onClick={() => deleteAccount(router, setError)}
                 className={styles.button}
-                style={{ backgroundColor: "red" }}
+                style={{ backgroundColor: "red", borderRadius: "8px" }}
             >
                 Supprimer le compte
             </button>
@@ -116,7 +136,7 @@ export default function AccountPage() {
             {user.subscriptionId === null && user.isApproved === true && (
                 <button
                     className={styles.button}
-                    style={{ backgroundColor: "#0070f3" }}
+                    style={{ backgroundColor: "#0070f3", borderRadius: "8px" }}
                     onClick={() => router.push("/subscription")}
                 >
                     S'abonner
@@ -125,17 +145,16 @@ export default function AccountPage() {
             {user.subscriptionId && (
                 <button
                     className={styles.button}
-                    style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
+                    style={{ backgroundColor: "#ff9800", marginBottom: "16px", borderRadius: "8px" }}
                     onClick={async () => {
-                        // ← CHANGÉ : Ajoute le token d'authentification
+                        // ← MODIFIÉ : Utilise credentials au lieu du token Authorization
                         const res = await fetch("/api/subscription/cancel-subscription", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
-                                "Accept": "application/json",
-                                "Authorization": `Bearer ${token}`
+                                "Accept": "application/json"
                             },
-                            body: JSON.stringify({ email: user.email }),
+                            credentials: 'include',
                             mode: 'cors'
                         });
                         const data = await res.json();

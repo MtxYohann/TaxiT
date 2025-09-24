@@ -7,10 +7,22 @@ import { useAuth } from "../hooks/useAuth";
 export default function Home() {
     const { user, loading, isAuthenticated } = useAuth();
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.reload(); // Recharge la page pour mettre à jour l'état
+    const handleLogout = async () => {
+        try {
+            // ← MODIFIÉ : Appel à une route de déconnexion côté serveur
+            await fetch('/api/logout', {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'include'
+            });
+
+            // ← MODIFIÉ : Plus besoin de localStorage
+            window.location.reload();
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+            // Fallback : recharger quand même
+            window.location.reload();
+        }
     };
 
     if (loading) {
@@ -58,7 +70,7 @@ export default function Home() {
                         <Image src="/iconTaxi.png" alt="Taxi course" width={30} height={30} />
                         Commander un taxi
                     </a>
-                    
+
                     {isAuthenticated ? (
                         // Si connecté : afficher "Mon compte" et "Déconnexion"
                         <>
@@ -82,7 +94,7 @@ export default function Home() {
                     )}
                 </div>
             </main>
-            
+
             <footer className={styles.footer}>
                 <p>&copy; {new Date().getFullYear()} TaxiT. Tous droits réservés.</p>
             </footer>

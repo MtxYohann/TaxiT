@@ -1,18 +1,15 @@
 "use client";
-import { useAuth } from "../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { useAuth } from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function AdminButton() {
-  const { user, loading, isAuthenticated } = useAuth(); // ← CHANGÉ : Utilise useAuth
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // ⏳ Attente de chargement de la session
   if (loading) return null;
 
-  // ❌ Pas connecté ou pas admin → on n'affiche rien
   if (!isAuthenticated || user?.role !== "admin") return null;
 
-  // ✅ Utilisateur connecté et admin
   return (
     <button
       onClick={() => router.push("/admin")}

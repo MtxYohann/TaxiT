@@ -2,45 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
-import { fetchUserData } from "../../utils/accountActions";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function EditAccountPage() {
-    const [user, setUser] = useState(null);
-    const [reservations, setReservations] = useState([]); // ← AJOUTÉ : Pour fetchUserData
-    const { user: authUser, isAuthenticated, loading, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
-    const router = useRouter();
     const [form, setForm] = useState({ name: "", phone: "" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const { user: authUser, isAuthenticated, loading } = useAuth();
+    const router = useRouter();
 
-    // ← CHANGÉ : Vérification d'authentification et récupération des données
+
     useEffect(() => {
         if (!loading && !isAuthenticated) {
             router.push('/login');
             return;
         }
 
-        if (isAuthenticated) {
-            // ← CHANGÉ : Plus besoin de passer l'email, fetchUserData utilise localStorage
-            fetchUserData(
-                (data) => {
-                    setUser({
-                        id: data.id,
-                        name: data.name,
-                        email: data.email,
-                        phone: data.phone,
-                    });
-                    setForm({
-                        name: data.name || "",
-                        phone: data.phone || "",
-                    });
-                },
-                setReservations, // ← AJOUTÉ : Paramètre requis pour fetchUserData
-                setError
-            );
+        if (authUser) {
+            setForm({
+                name: authUser.name || "",
+                phone: authUser.phone || "",
+            });
         }
-    }, [isAuthenticated, loading, router]);
+    }, [isAuthenticated, loading, router, authUser]);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -53,16 +37,16 @@ export default function EditAccountPage() {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({
-                    email: authUser.email, // ← CHANGÉ : Utilise authUser au lieu de session
+
                     name: form.name,
                     phone: form.phone,
                 }),
-                mode: 'cors'
+                credentials: 'include'
             });
+
             if (!res.ok) throw new Error("Erreur lors de la modification.");
             setSuccess("Compte modifié !");
             setTimeout(() => router.push("/account"), 1500);
@@ -71,17 +55,15 @@ export default function EditAccountPage() {
         }
     };
 
-    // ← AJOUTÉ : État de chargement
     if (loading) {
         return <p>Chargement...</p>;
     }
 
-    // ← AJOUTÉ : Redirection si pas connecté
     if (!isAuthenticated) {
         return null;
     }
 
-    if (!user) {
+    if (!authUser) {
         return <p>Chargement des informations utilisateur...</p>;
     }
 
@@ -97,7 +79,13 @@ export default function EditAccountPage() {
                         value={form.name}
                         onChange={handleChange}
                         required
-                        style={{ width: "100%", padding: 8, marginTop: 5 }}
+                        style={{
+                            width: "100%",
+                            padding: 8,
+                            marginTop: 5,
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
                 </div>
                 <div style={{ marginBottom: 10 }}>
@@ -109,8 +97,18 @@ export default function EditAccountPage() {
                         onChange={handleChange}
                         required
                         pattern="^(\+33|0)[1-9](\d{2}){4}$"
-                        style={{ width: "100%", padding: 8, marginTop: 5 }}
+                        placeholder="06 12 34 56 78 ou +33 6 12 34 56 78"
+                        style={{
+                            width: "100%",
+                            padding: 8,
+                            marginTop: 5,
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
+                    <small style={{ color: "#666" }}>
+                        Format attendu : 06 12 34 56 78 ou +33 6 12 34 56 78
+                    </small>
                 </div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {success && <p style={{ color: "green" }}>{success}</p>}
@@ -122,7 +120,9 @@ export default function EditAccountPage() {
                         backgroundColor: "#0070f3",
                         color: "white",
                         border: "none",
+                        borderRadius: "8px",
                         cursor: "pointer",
+                        marginTop: 10
                     }}
                 >
                     Enregistrer

@@ -33,7 +33,7 @@ export default function VerifChauffeurPage() {
       });
       const data = await res.json();
       alert(data.message || "Action effectuée");
-      router.push("/admin"); // retourne au panneau admin
+      router.push("/admin");
     } catch (err) {
       alert("Erreur lors de l'action.");
       console.error(err);

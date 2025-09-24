@@ -1,10 +1,10 @@
 "use client";
 
-import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { useAuth } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const handleDelete = async (email, token) => { // ← AJOUTÉ : token en paramètre
+const handleDelete = async (email) => {
   if (!confirm(`Supprimer ${email} ?`)) return;
 
   try {
@@ -12,8 +12,9 @@ const handleDelete = async (email, token) => { // ← AJOUTÉ : token en paramè
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
       },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
@@ -25,7 +26,7 @@ const handleDelete = async (email, token) => { // ← AJOUTÉ : token en paramè
   }
 };
 
-const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
+const handleEdit = async (user) => {
   const newName = prompt("Nouveau nom :", user.name);
   const newPhone = prompt("Nouveau téléphone :", user.phone);
 
@@ -36,8 +37,9 @@ const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'auth
       },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify({
         email: user.email,
         name: newName || user.name,
@@ -54,7 +56,7 @@ const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
 };
 
 export default function AdminPage() {
-  const { user, loading, isAuthenticated, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
   const [selectedModule, setSelectedModule] = useState("dashboard");
   const [users, setUsers] = useState([]);
@@ -64,15 +66,16 @@ export default function AdminPage() {
     if (!isAuthenticated || user?.role !== "admin") {
       router.push("/unauthorized");
     }
-  }, [loading, isAuthenticated, user, router]); // ← CHANGÉ : Nouvelles dépendances
+  }, [loading, isAuthenticated, user, router]);
 
-  // Fetch users depuis l'API backend (filtrage par rôle dans le front ici)
+  // Fetch users depuis l'API backend
   useEffect(() => {
     const fetchUsers = async () => {
       if (selectedModule === "users") {
         try {
           const res = await fetch("/api/users", {
-            headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
+            credentials: 'include',
+            mode: 'cors'
           });
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "user");
@@ -84,7 +87,8 @@ export default function AdminPage() {
       if (selectedModule === "chauffeurs") {
         try {
           const res = await fetch("/api/users", {
-            headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
+            credentials: 'include',
+            mode: 'cors'
           });
           const data = await res.json();
           const filtered = data.filter((user) => user.role === "driver");
@@ -96,7 +100,8 @@ export default function AdminPage() {
       if (selectedModule === "verif-chauffeurs") {
         try {
           const res = await fetch("/api/users", {
-            headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
+            credentials: 'include',
+            mode: 'cors'
           });
           const data = await res.json();
           console.log("Données récupérées :", data);
@@ -108,13 +113,12 @@ export default function AdminPage() {
       }
     };
 
-    // ← AJOUTÉ : Vérifier qu'on a un token avant de fetch
-    if (token && isAuthenticated) {
+    if (isAuthenticated) {
       fetchUsers();
     }
-  }, [selectedModule, token, isAuthenticated]); // ← CHANGÉ : Ajout dépendances
+  }, [selectedModule, isAuthenticated]);
 
-  if (loading || !isAuthenticated) return <p>Chargement...</p>; // ← CHANGÉ
+  if (loading || !isAuthenticated) return <p>Chargement...</p>;
 
   const renderContent = () => {
     switch (selectedModule) {
@@ -153,7 +157,7 @@ export default function AdminPage() {
                     <p>📞 {userItem.phone || "N/A"}</p>
                     <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
                       <button
-                        onClick={() => handleEdit(userItem, token)}
+                        onClick={() => handleEdit(userItem)}
                         style={{
                           backgroundColor: "#0070f3",
                           color: "white",
@@ -166,7 +170,7 @@ export default function AdminPage() {
                         📝 Éditer
                       </button>
                       <button
-                        onClick={() => handleDelete(userItem.email, token)}
+                        onClick={() => handleDelete(userItem.email)}
                         style={{
                           backgroundColor: "#e00",
                           color: "white",
@@ -219,7 +223,7 @@ export default function AdminPage() {
                     <p>🚗 Statut: {userItem.isApproved ? "Approuvé" : "En attente"}</p>
                     <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
                       <button
-                        onClick={() => handleEdit(userItem, token)}
+                        onClick={() => handleEdit(userItem)}
                         style={{
                           backgroundColor: "#0070f3",
                           color: "white",
@@ -232,7 +236,7 @@ export default function AdminPage() {
                         📝 Éditer
                       </button>
                       <button
-                        onClick={() => handleDelete(userItem.email, token)}
+                        onClick={() => handleDelete(userItem.email)}
                         style={{
                           backgroundColor: "#e00",
                           color: "white",
@@ -287,15 +291,16 @@ export default function AdminPage() {
                     <div style={{ marginTop: "10px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
                       <button
                         onClick={async () => {
-                          // Approuver la demande chauffeur
+
                           try {
-                            const res = await fetch(`/api/approve-driver/${userItem.id}`, { // ← CHANGÉ : ID dans l'URL
+                            const res = await fetch(`/api/approve-driver/${userItem.id}`, {
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
                               },
-                              body: JSON.stringify({ approve: true }) // ← CHANGÉ : approve: true dans le body
+                              credentials: 'include',
+                              mode: 'cors',
+                              body: JSON.stringify({ approve: true })
                             });
                             const data = await res.json();
                             alert(data.message);
@@ -317,7 +322,7 @@ export default function AdminPage() {
                         ✅ Approuver
                       </button>
                       <button
-                        onClick={() => handleEdit(userItem, token)}
+                        onClick={() => handleEdit(userItem)}
                         style={{
                           backgroundColor: "#0070f3",
                           color: "white",
@@ -330,7 +335,7 @@ export default function AdminPage() {
                         📝 Éditer
                       </button>
                       <button
-                        onClick={() => handleDelete(userItem.email, token)}
+                        onClick={() => handleDelete(userItem.email)}
                         style={{
                           backgroundColor: "#e00",
                           color: "white",

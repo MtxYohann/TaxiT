@@ -2,21 +2,20 @@
 import React, { useState, useRef, useEffect } from "react";
 import { GoogleMap, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import { calculerTarif } from "../app/controllers/routesController";
-import { createLocalDateTime } from "../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
+import { createLocalDateTime } from "../utils/dateUtils";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
+import { useAuth } from "../hooks/useAuth";
 
 const containerStyle = {
   width: "100%",
-  height: "100%", // Hauteur ajustée pour que la carte soit plus petite
+  height: "100%",
 };
 
 const center = {
-  lat: 45.764043, // Latitude de Paris
-  lng: 4.835659, // Longitude de Paris
+  lat: 45.764043,
+  lng: 4.835659,
 };
 
-//définition de la limite géographique de la carte
 const rhoneLimite = {
   north: 45.930385,
   south: 45.430385,
@@ -24,18 +23,17 @@ const rhoneLimite = {
   east: 5.130385,
 };
 
-//limitation de la carte en france 
 const componentRestrictions = { country: "fr" };
 
 const mapOtions = {
-  streetViewControl: false, // Désactive le mode Street View
-  fullscreenControl: false, // Désactive le mode plein écran
-  clickableIcons: false, // Désactive les icônes cliquables
-  mapTypeControl: false, // Désactive le contrôle du type de carte
+  streetViewControl: false,
+  fullscreenControl: false,
+  clickableIcons: false,
+  mapTypeControl: false,
 };
 
 export default function MapPage() {
-  const { user, token, isAuthenticated, loading } = useAuth(); // ← CHANGÉ : Utilise useAuth
+  const { user, isAuthenticated, loading } = useAuth();
   const [pickup, setPickup] = useState(null);
   const [dropoff, setDropoff] = useState(null);
   const [directions, setDirections] = useState(null);
@@ -47,7 +45,6 @@ export default function MapPage() {
   const pickupRef = useRef(null);
   const dropoffRef = useRef(null);
 
-  // ← AJOUTÉ : Vérification de l'authentification
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/login');
@@ -80,7 +77,7 @@ export default function MapPage() {
             setDirections(result);
             const distance = result.routes[0].legs[0].distance.value / 1000;
             const duration = result.routes[0].legs[0].duration.value / 60;
-            const dateTime = createLocalDateTime(date, time); // ← CHANGÉ : Utilise la fonction utilitaire
+            const dateTime = createLocalDateTime(date, time);
             console.log(`Date: ${dateTime}`);
             console.log(`Distance: ${distance} km`);
             if (!date || !time) {
@@ -113,42 +110,51 @@ export default function MapPage() {
         dropoffLat: dropoff.lat,
         dropoffLng: dropoff.lng,
         fare: parseFloat(tarif),
-        dateTime: createLocalDateTime(date, time), // ← CHANGÉ : Utilise la fonction utilitaire
-        clientId: user?.id, // ← CHANGÉ : Utilise user du hook
+        dateTime: createLocalDateTime(date, time),
+        clientId: user?.id,
       };
       try {
         const response = await fetch("/api/reservations/add-reservation", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`, // ← AJOUTÉ : Token d'authentification
+            "Accept": "application/json"
           },
           body: JSON.stringify(reservationData),
-          mode: 'cors'
+          credentials: 'include'
+
         });
 
         const result = await response.json();
         console.log('Réponse du serveur:', result);
         if (!response.ok) {
           throw new Error(result.message);
-        }
-        else {
+        } else {
           const reservationId = result.reservation.id;
           console.log("Course réservée avec succès ID de la reservation : ", result.reservation.id);
           router.push(`/reservation?reservationId=${reservationId}`);
         }
       } catch (error) {
         console.error("Impossible de réserver la course", error);
+        alert("Erreur lors de la réservation : " + error.message);
       }
     } else {
       console.error("Veuillez saisir les lieux de prise en charge et de dépose, ainsi que la date et l'heure de la réservation");
+      alert("Veuillez remplir tous les champs avant de réserver.");
     }
   }
 
-  // ← CHANGÉ : Nouvelle logique de chargement et vérification
   if (loading) {
-    return <div>Chargement...</div>;
+    return (
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh"
+      }}>
+        Chargement...
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -162,7 +168,7 @@ export default function MapPage() {
             backgroundColor: "#007BFF",
             color: "white",
             border: "none",
-            borderRadius: "5px",
+            borderRadius: "8px",
             cursor: "pointer",
           }}
         >
@@ -208,7 +214,11 @@ export default function MapPage() {
           margin: "10px",
         }}
       >
-        <Autocomplete onLoad={(ref) => (pickupRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)} options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}>
+        <Autocomplete
+          onLoad={(ref) => (pickupRef.current = ref)}
+          onPlaceChanged={() => handlePlaceChanged(pickupRef.current, setPickup)}
+          options={{ bounds: rhoneLimite, componentRestrictions: componentRestrictions, strictBounds: true }}
+        >
           <input
             type="text"
             placeholder="Entrée un point de départ"
@@ -216,12 +226,16 @@ export default function MapPage() {
               width: "90%",
               marginBottom: "10px",
               padding: "10px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
             }}
           />
         </Autocomplete>
-        <Autocomplete onLoad={(ref) => (dropoffRef.current = ref)} onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)} options={{ componentRestrictions: componentRestrictions }}>
+        <Autocomplete
+          onLoad={(ref) => (dropoffRef.current = ref)}
+          onPlaceChanged={() => handlePlaceChanged(dropoffRef.current, setDropoff)}
+          options={{ componentRestrictions: componentRestrictions }}
+        >
           <input
             type="text"
             placeholder="Entrée un point de d'arrivée"
@@ -229,13 +243,35 @@ export default function MapPage() {
               width: "90%",
               marginBottom: "10px",
               padding: "10px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
             }}
           />
         </Autocomplete>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={{ width: "90%", marginBottom: "10px", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }} />
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          style={{
+            width: "90%",
+            marginBottom: "10px",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc"
+          }}
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          style={{
+            width: "90%",
+            marginBottom: "10px",
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc"
+          }}
+        />
 
         <button
           onClick={handleCalculateRoute}
@@ -245,38 +281,43 @@ export default function MapPage() {
             backgroundColor: "#007BFF",
             color: "white",
             border: "none",
-            borderRadius: "5px",
+            borderRadius: "8px",
             cursor: "pointer",
             marginBottom: "10px",
           }}
         >
           Estimer le prix
         </button>
-        {tarif && <p style={{ marginTop: "20px" }}>Estimation prix: {tarif}€</p>}
+        {tarif && (
+          <p style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f0f8ff", borderRadius: "8px" }}>
+            {typeof tarif === 'number' ? `Estimation prix: ${tarif}€` : tarif}
+          </p>
+        )}
         <button
           onClick={handleReservation}
+          disabled={!tarif || typeof tarif !== 'number'}
           style={{
             width: "95%",
             padding: "10px",
-            backgroundColor: "#007BFF",
+            backgroundColor: (!tarif || typeof tarif !== 'number') ? "#ccc" : "#28a745",
             color: "white",
             border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
+            borderRadius: "8px",
+            cursor: (!tarif || typeof tarif !== 'number') ? "not-allowed" : "pointer",
           }}
         >
-          Reserver une course
+          Réserver une course
         </button>
       </div>
       {/* Styles globaux */}
       <style jsx global>{`
-      body {
-        margin: 0;
-        height: 100vh;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-      }
-    `}</style>
+        body {
+          margin: 0;
+          height: 100vh;
+          overflow: hidden;
+          font-family: Arial, sans-serif;
+        }
+      `}</style>
     </div>
   );
 }

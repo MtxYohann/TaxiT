@@ -1,20 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth"; // ← CHANGÉ : Remplace useSession par useAuth
-import { formatLocalDateTime } from "../../utils/dateUtils"; // ← AJOUTÉ : Utilitaire pour les dates
+import { useAuth } from "../../hooks/useAuth";
+import { formatLocalDateTime } from "../../utils/dateUtils";
 import { getAddressFromCoords } from "@/src/utils/accountActions";
 import { useRouter } from "next/navigation";
 
 const DriverDashboard = () => {
-  const { user, loading, isAuthenticated, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
   const [pickupAddresses, setPickupAddresses] = useState({});
   const [dropoffAddresses, setDropoffAddresses] = useState({});
   const [selectedTab, setSelectedTab] = useState("pending");
   const [orders, setOrders] = useState([]);
-  const [ordersLoading, setOrdersLoading] = useState(true); // ← CHANGÉ : Renommé pour éviter confusion
+  const [ordersLoading, setOrdersLoading] = useState(true);
 
-  const chauffeurId = user?.id; // ← CHANGÉ : Utilise user au lieu de session
+  const chauffeurId = user?.id;
 
   const fetchOrders = async () => {
     if (!chauffeurId) return;
@@ -26,9 +26,7 @@ const DriverDashboard = () => {
 
     try {
       const res = await fetch(url, {
-        headers: {
-          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
-        }
+        credentials: 'include'
       });
       const data = await res.json();
       setOrders(data);
@@ -55,16 +53,15 @@ const DriverDashboard = () => {
   };
 
   useEffect(() => {
-    // ← AJOUTÉ : Vérification d'authentification
     if (!loading && !isAuthenticated) {
       router.push('/login');
       return;
     }
 
-    if (chauffeurId && token) {
+    if (chauffeurId && isAuthenticated) {
       fetchOrders();
     }
-  }, [selectedTab, chauffeurId, token, loading, isAuthenticated, router]); // ← CHANGÉ : Nouvelles dépendances
+  }, [selectedTab, chauffeurId, loading, isAuthenticated, router]);
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
@@ -72,11 +69,10 @@ const DriverDashboard = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
+          "Accept": "application/json"
         },
         body: JSON.stringify({ status: action === "accept" ? "accepted" : "rejected" }),
-        mode: 'cors'
+        credentials: 'include'
       });
 
       const result = await res.json();
@@ -85,14 +81,16 @@ const DriverDashboard = () => {
         fetchOrders();
       } else {
         console.error(result);
+        alert("Erreur lors de la mise à jour du statut");
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut :", error);
+      alert("Erreur de connexion");
     }
   };
 
   const renderOrders = () => {
-    if (ordersLoading) return <p>⏳ Chargement des commandes...</p>; // ← CHANGÉ : ordersLoading
+    if (ordersLoading) return <p>⏳ Chargement des commandes...</p>;
     if (orders.length === 0) return <p>😕 Aucune commande à afficher.</p>;
 
     return (
@@ -161,7 +159,6 @@ const DriverDashboard = () => {
     );
   };
 
-  // ← CHANGÉ : Nouvelles conditions de chargement et d'authentification
   if (loading) return <p>Chargement de la session...</p>;
   if (!isAuthenticated) return <p>Redirection...</p>;
   if (!chauffeurId) return <p>Vous devez être connecté comme chauffeur.</p>;

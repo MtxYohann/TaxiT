@@ -7,10 +7,8 @@ export default function CommandeChauffeurBouton() {
   const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // ⏳ Attente de chargement
   if (loading) return null;
 
-  // ❌ Pas connecté ou pas chauffeur → on n’affiche rien
   if (!isAuthenticated || user?.role !== "driver") return null;
 
   return (

@@ -18,9 +18,12 @@ export default function RegisterPage() {
         try {
             const res = await fetch("/api/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
                 body: JSON.stringify({ email, password, name, phone }),
-                mode: 'cors'
+                credentials: 'include'
             });
 
             if (!res.ok) {
@@ -52,7 +55,13 @@ export default function RegisterPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                        style={{
+                            width: "100%",
+                            padding: "8px",
+                            marginTop: "5px",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
                 </div>
                 <div style={{ marginBottom: "10px" }}>
@@ -62,7 +71,13 @@ export default function RegisterPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                        style={{
+                            width: "100%",
+                            padding: "8px",
+                            marginTop: "5px",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
                 </div>
                 <div style={{ marginBottom: "10px" }}>
@@ -73,8 +88,18 @@ export default function RegisterPage() {
                         onChange={(e) => setPhone(e.target.value)}
                         required
                         pattern="^(\+33|0)[1-9](\d{2}){4}$"
-                        style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                        placeholder="06 12 34 56 78 ou +33 6 12 34 56 78"
+                        style={{
+                            width: "100%",
+                            padding: "8px",
+                            marginTop: "5px",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
+                    <small style={{ color: "#666" }}>
+                        Format attendu : 06 12 34 56 78 ou +33 6 12 34 56 78
+                    </small>
                 </div>
                 <div style={{ marginBottom: "10px" }}>
                     <label>Mot de passe :</label>
@@ -83,8 +108,18 @@ export default function RegisterPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+                        minLength="6"
+                        style={{
+                            width: "100%",
+                            padding: "8px",
+                            marginTop: "5px",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc"
+                        }}
                     />
+                    <small style={{ color: "#666" }}>
+                        Minimum 6 caractères
+                    </small>
                 </div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {success && <p style={{ color: "green" }}>{success}</p>}
@@ -96,12 +131,30 @@ export default function RegisterPage() {
                         backgroundColor: "#0070f3",
                         color: "white",
                         border: "none",
+                        borderRadius: "8px",
                         cursor: "pointer",
+                        marginTop: "10px"
                     }}
                 >
                     S'inscrire
                 </button>
             </form>
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <p>Déjà inscrit ?{" "}
+                    <button
+                        onClick={() => router.push("/login")}
+                        style={{
+                            background: "none",
+                            border: "none",
+                            color: "#0070f3",
+                            textDecoration: "underline",
+                            cursor: "pointer"
+                        }}
+                    >
+                        Se connecter
+                    </button>
+                </p>
+            </div>
         </div>
     );
 }
