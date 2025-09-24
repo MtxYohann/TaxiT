@@ -175,7 +175,7 @@ function SubscriptionForm({ email, priceId, onSuccess }) {
                 }}>
                     <p><strong>ℹ️ Informations importantes :</strong></p>
                     <ul style={{ margin: "8px 0", paddingLeft: "20px" }}>
-                        <li>Abonnement mensuel de 29€</li>
+                        <li>Abonnement mensuel de 10€</li>
                         <li>Accès complet à la plateforme chauffeur</li>
                         <li>Annulation possible à tout moment</li>
                         <li>Paiement sécurisé par Stripe</li>
