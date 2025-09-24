@@ -11,7 +11,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://loadbalancer-backend-taxit-1400536818.eu-west-3.elb.amazonaws.com:4000/api/login', {
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
