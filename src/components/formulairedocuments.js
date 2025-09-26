@@ -2,6 +2,8 @@
 import { useState } from "react";
 import styles from "../styles/formulairedocuments.module.css";
 
+// ✅ Configuration de l'API
+
 const handleRequestDriver = async (userId) => {
   try {
     const response = await fetch(`/api/request-driver`, {
@@ -66,6 +68,7 @@ export default function UploadDocumentsForm({ userId }) {
     formData.append("carte", carte);
 
     try {
+
       const res = await fetch(`/api/upload-documents/${userId}`, {
         method: "POST",
         body: formData,
