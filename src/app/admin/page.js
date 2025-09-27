@@ -285,6 +285,19 @@ export default function AdminPage() {
                     <p>✅ Approuvé: {userItem.isApproved ? "Oui" : "Non"}</p>
                     <div style={{ marginTop: "10px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
                       <button
+                        onClick={() => router.push(`/admin/verifier/${userItem.id}`)}
+                        style={{
+                          backgroundColor: "#17a2b8",
+                          color: "white",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        🔍 Vérifier les documents
+                      </button>
+                      <button
                         onClick={async () => {
 
                           try {
