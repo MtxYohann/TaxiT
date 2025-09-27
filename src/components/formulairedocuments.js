@@ -62,11 +62,12 @@ export default function UploadDocumentsForm({ userId }) {
     console.log('🚀 handleSubmit - DÉBUT');
     console.log('🍪 Cookies au début:', document.cookie);
 
-    const extractAuthToken = () => {
+    // ← MODIFIÉ : Nouvelle méthode extractAuthToken avec API fallback
+    const extractAuthToken = async () => {
       const fullCookie = document.cookie;
       console.log('🔍 Cookie complet:', fullCookie);
 
-      // Méthode 1: Split par point-virgule
+      // Méthode 1: Essayer document.cookie d'abord
       const cookies = fullCookie.split(';');
       console.log('🔍 Cookies séparés:', cookies);
 
@@ -74,7 +75,7 @@ export default function UploadDocumentsForm({ userId }) {
         const [name, value] = cookie.trim().split('=');
         console.log('🔍 Cookie analysé:', { name, value: value?.substring(0, 20) + '...' });
         if (name === 'auth-token') {
-          console.log('✅ Token trouvé par split!');
+          console.log('✅ Token trouvé par document.cookie!');
           return value;
         }
       }
@@ -86,11 +87,29 @@ export default function UploadDocumentsForm({ userId }) {
         return match[1];
       }
 
-      console.log('❌ Token auth-token introuvable');
+      // Méthode 3: Si pas trouvé, demander au serveur via /get-token
+      try {
+        console.log('🔄 Token non trouvé dans document.cookie, tentative via API...');
+        const response = await fetch('/api/get-token', {
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Token récupéré via API /get-token');
+          return data.token;
+        } else {
+          console.log('❌ Erreur API /get-token - Status:', response.status);
+        }
+      } catch (apiError) {
+        console.log('❌ Erreur réseau /get-token:', apiError.message);
+      }
+
+      console.log('❌ Token auth-token introuvable par toutes les méthodes');
       return null;
     };
 
-    const authToken = extractAuthToken();
+    const authToken = await extractAuthToken(); // ← CHANGÉ en async/await
     console.log('🔑 Token final:', authToken ? 'TROUVÉ' : 'ABSENT');
 
     if (!authToken) {
