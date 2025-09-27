@@ -70,6 +70,27 @@ export default function UploadDocumentsForm({ userId }) {
     console.log('🔍 carte:', carte ? { name: carte.name, size: carte.size, type: carte.type } : 'null');
     console.log('🍪 Cookies au début:', document.cookie);
 
+    try {
+      console.log('🧪 Test de la route upload...');
+      const testRes = await fetch('/api/test-upload', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      console.log('🧪 Test route upload - Status:', testRes.status);
+      console.log('🧪 Test route upload - OK:', testRes.ok);
+
+      if (testRes.ok) {
+        const testData = await testRes.json();
+        console.log('🧪 Test route upload - Response:', testData);
+      } else {
+        console.log('🧪 Test route upload - Erreur Status:', testRes.status);
+        const testText = await testRes.text();
+        console.log('🧪 Test route upload - Error Response:', testText.substring(0, 200));
+      }
+    } catch (testError) {
+      console.log('❌ Test route échoué:', testError);
+    }
+
     if (!permis || !carte) {
       console.log('❌ Fichiers manquants');
       setMessage("⚠️ Merci de sélectionner les deux fichiers.");
