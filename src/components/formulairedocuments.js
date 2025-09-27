@@ -115,7 +115,10 @@ export default function UploadDocumentsForm({ userId }) {
       const res = await fetch(uploadUrl, {
         method: "POST",
         body: formData,
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
       });
 
       console.log('📥 Réponse upload - Status:', res.status);
