@@ -63,19 +63,35 @@ export default function UploadDocumentsForm({ userId }) {
     console.log('🍪 Cookies au début:', document.cookie);
 
     const extractAuthToken = () => {
-      const cookies = document.cookie.split(';');
+      const fullCookie = document.cookie;
+      console.log('🔍 Cookie complet:', fullCookie);
+
+      // Méthode 1: Split par point-virgule
+      const cookies = fullCookie.split(';');
+      console.log('🔍 Cookies séparés:', cookies);
+
       for (let cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
+        console.log('🔍 Cookie analysé:', { name, value: value?.substring(0, 20) + '...' });
         if (name === 'auth-token') {
-          console.log('🔑 Token trouvé:', value.substring(0, 20) + '...');
+          console.log('✅ Token trouvé par split!');
           return value;
         }
       }
-      console.log('❌ Token auth-token non trouvé');
+
+      // Méthode 2: Regex de secours
+      const match = fullCookie.match(/auth-token=([^;]+)/);
+      if (match) {
+        console.log('✅ Token trouvé par regex!');
+        return match[1];
+      }
+
+      console.log('❌ Token auth-token introuvable');
       return null;
     };
 
     const authToken = extractAuthToken();
+    console.log('🔑 Token final:', authToken ? 'TROUVÉ' : 'ABSENT');
 
     if (!authToken) {
       alert('⚠️ Session expirée. Veuillez vous reconnecter.');
