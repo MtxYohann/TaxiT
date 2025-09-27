@@ -2,8 +2,8 @@
 import { useState } from "react";
 import styles from "../styles/formulairedocuments.module.css";
 
-const handleRequestDriver = async (userId) => {
-  console.log('🚀 handleRequestDriver - Début avec userId:', userId);
+const handleRequestDriver = async () => { // ← Supprimé userId du paramètre
+  console.log('🚀 handleRequestDriver - Début');
 
   try {
     console.log('📡 Envoi requête request-driver vers:', '/api/request-driver');
@@ -15,16 +15,12 @@ const handleRequestDriver = async (userId) => {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
-      body: JSON.stringify({ userId }),
+      // ← SUPPRIMÉ : body: JSON.stringify({ userId }),
       credentials: 'include'
     });
 
     console.log('📥 Réponse request-driver - Status:', response.status);
     console.log('📥 Réponse request-driver - StatusText:', response.statusText);
-    console.log('📥 Réponse request-driver - Headers:', {
-      'content-type': response.headers.get('content-type'),
-      'set-cookie': response.headers.get('set-cookie')
-    });
 
     const result = await response.json();
     console.log('📥 Réponse request-driver - Data:', result);
@@ -70,6 +66,7 @@ export default function UploadDocumentsForm({ userId }) {
     console.log('🔍 carte:', carte ? { name: carte.name, size: carte.size, type: carte.type } : 'null');
     console.log('🍪 Cookies au début:', document.cookie);
 
+    // Test de la route
     try {
       console.log('🧪 Test de la route upload...');
       const testRes = await fetch('/api/test-upload', {
@@ -82,10 +79,6 @@ export default function UploadDocumentsForm({ userId }) {
       if (testRes.ok) {
         const testData = await testRes.json();
         console.log('🧪 Test route upload - Response:', testData);
-      } else {
-        console.log('🧪 Test route upload - Erreur Status:', testRes.status);
-        const testText = await testRes.text();
-        console.log('🧪 Test route upload - Error Response:', testText.substring(0, 200));
       }
     } catch (testError) {
       console.log('❌ Test route échoué:', testError);
@@ -104,7 +97,7 @@ export default function UploadDocumentsForm({ userId }) {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     if (permis.size > maxSize || carte.size > maxSize) {
       console.log('❌ Fichiers trop volumineux:', {
         permis: `${(permis.size / 1024 / 1024).toFixed(2)}MB`,
@@ -128,7 +121,8 @@ export default function UploadDocumentsForm({ userId }) {
     });
 
     try {
-      const uploadUrl = `/api/upload-documents/${userId}`;
+      // ← MODIFIÉ : Nouvelle URL sans userId
+      const uploadUrl = `/api/upload-my-documents`;
       console.log('📡 URL de upload:', uploadUrl);
       console.log('📡 Envoi requête upload...');
       console.log('🍪 Cookies avant requête upload:', document.cookie);
@@ -145,13 +139,7 @@ export default function UploadDocumentsForm({ userId }) {
       console.log('📥 Réponse upload - Status:', res.status);
       console.log('📥 Réponse upload - StatusText:', res.statusText);
       console.log('📥 Réponse upload - OK:', res.ok);
-      console.log('📥 Réponse upload - Headers:', {
-        'content-type': res.headers.get('content-type'),
-        'content-length': res.headers.get('content-length'),
-        'server': res.headers.get('server')
-      });
 
-      // Vérifier le Content-Type avant de parser en JSON
       const contentType = res.headers.get('content-type');
       console.log('📥 Content-Type reçu:', contentType);
 
@@ -170,17 +158,15 @@ export default function UploadDocumentsForm({ userId }) {
         setMessage("✅ Documents envoyés avec succès !");
 
         console.log('🚀 Appel handleRequestDriver...');
-        await handleRequestDriver(userId);
+        await handleRequestDriver(); // ← SUPPRIMÉ : userId
 
         console.log('🧹 Nettoyage des fichiers...');
         setPermis(null);
         setCarte(null);
 
         const fileInputs = document.querySelectorAll('input[type="file"]');
-        console.log('🧹 Nombre d\'inputs trouvés:', fileInputs.length);
-        fileInputs.forEach((input, index) => {
+        fileInputs.forEach((input) => {
           input.value = '';
-          console.log(`🧹 Input ${index} nettoyé`);
         });
 
       } else {
@@ -197,18 +183,11 @@ export default function UploadDocumentsForm({ userId }) {
         setMessage(`❌ Erreur : ${data.error || "Erreur inconnue"}`);
       }
     } catch (err) {
-      console.error("❌ ERREUR UPLOAD DÉTAILLÉE :", {
-        message: err.message,
-        name: err.name,
-        stack: err.stack,
-        cause: err.cause
-      });
+      console.error("❌ ERREUR UPLOAD DÉTAILLÉE :", err);
 
       if (err.name === 'SyntaxError') {
-        console.error('❌ Erreur JSON parsing - probablement HTML reçu');
         setMessage("⚠️ Erreur serveur - réponse invalide (HTML au lieu de JSON)");
       } else if (err.name === 'TypeError') {
-        console.error('❌ Erreur de réseau');
         setMessage("⚠️ Erreur de connexion réseau");
       } else {
         setMessage("⚠️ Erreur lors de l'envoi. Veuillez vérifier votre connexion.");
@@ -233,7 +212,7 @@ export default function UploadDocumentsForm({ userId }) {
         fontFamily: "monospace"
       }}>
         <strong>🐛 Debug Info:</strong>
-        <br />UserId: {userId}
+        <br />UserId: {userId} (ne sera plus utilisé dans l'URL)
         <br />Cookies: {typeof window !== 'undefined' ? (document.cookie ? 'présents' : 'absents') : 'N/A'}
         <br />URL actuelle: {typeof window !== 'undefined' ? window.location.href : 'N/A'}
         <br />Permis: {permis ? `${permis.name} (${(permis.size / 1024 / 1024).toFixed(2)}MB)` : 'Non sélectionné'}
@@ -312,7 +291,6 @@ export default function UploadDocumentsForm({ userId }) {
             cursor: (loading || !permis || !carte) ? "not-allowed" : "pointer",
             backgroundColor: loading ? "#6c757d" : undefined
           }}
-          onClick={() => console.log('🔘 Bouton submit cliqué')}
         >
           {loading ? "⏳ Envoi en cours..." : "📤 Envoyer les documents"}
         </button>
