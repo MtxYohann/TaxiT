@@ -3,12 +3,7 @@ import { useState } from "react";
 import styles from "../styles/formulairedocuments.module.css";
 
 const handleRequestDriver = async () => {
-  console.log('🚀 handleRequestDriver - Début');
-
   try {
-    console.log('📡 Envoi requête request-driver vers:', '/api/request-driver');
-    console.log('🍪 Cookies disponibles:', document.cookie);
-
     const response = await fetch(`/api/request-driver`, {
       method: "POST",
       headers: {
@@ -18,17 +13,11 @@ const handleRequestDriver = async () => {
       credentials: 'include'
     });
 
-    console.log('📥 Réponse request-driver - Status:', response.status);
-    console.log('📥 Réponse request-driver - StatusText:', response.statusText);
-
     const result = await response.json();
-    console.log('📥 Réponse request-driver - Data:', result);
 
     if (response.ok) {
-      console.log('✅ request-driver SUCCESS');
       alert("✅ Demande envoyée ! En attente de validation par un administrateur.");
     } else {
-      console.log('❌ request-driver FAILED - Status:', response.status);
       if (response.status === 401) {
         alert("❌ Session expirée. Veuillez vous reconnecter.");
         window.location.href = '/login';
@@ -37,15 +26,9 @@ const handleRequestDriver = async () => {
       alert("❌ Erreur : " + (result.error || result.message || "Erreur inconnue"));
     }
   } catch (error) {
-    console.error("❌ ERREUR request-driver :", {
-      message: error.message,
-      name: error.name,
-      stack: error.stack
-    });
+    console.error("❌ ERREUR request-driver :", error);
     alert("⚠️ Une erreur de connexion est survenue. Veuillez réessayer.");
   }
-
-  console.log('🏁 handleRequestDriver - Fin');
 };
 
 export default function UploadDocumentsForm({ userId }) {
@@ -54,85 +37,10 @@ export default function UploadDocumentsForm({ userId }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log('🔍 Rendu UploadDocumentsForm avec userId:', userId);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log('🚀 handleSubmit - DÉBUT');
-    console.log('🍪 Cookies au début:', document.cookie);
-
-    // ← MODIFIÉ : Nouvelle méthode extractAuthToken avec API fallback
-    const extractAuthToken = async () => {
-      const fullCookie = document.cookie;
-      console.log('🔍 Cookie complet:', fullCookie);
-
-      // Méthode 1: Essayer document.cookie d'abord
-      const cookies = fullCookie.split(';');
-      console.log('🔍 Cookies séparés:', cookies);
-
-      for (let cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        console.log('🔍 Cookie analysé:', { name, value: value?.substring(0, 20) + '...' });
-        if (name === 'auth-token') {
-          console.log('✅ Token trouvé par document.cookie!');
-          return value;
-        }
-      }
-
-      // Méthode 2: Regex de secours
-      const match = fullCookie.match(/auth-token=([^;]+)/);
-      if (match) {
-        console.log('✅ Token trouvé par regex!');
-        return match[1];
-      }
-
-      // Méthode 3: Si pas trouvé, demander au serveur via /get-token
-      try {
-        console.log('🔄 Token non trouvé dans document.cookie, tentative via API...');
-        const response = await fetch('/api/get-token', {
-          credentials: 'include'
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('✅ Token récupéré via API /get-token');
-          return data.token;
-        } else {
-          console.log('❌ Erreur API /get-token - Status:', response.status);
-        }
-      } catch (apiError) {
-        console.log('❌ Erreur réseau /get-token:', apiError.message);
-      }
-
-      console.log('❌ Token auth-token introuvable par toutes les méthodes');
-      return null;
-    };
-
-    const authToken = await extractAuthToken(); // ← CHANGÉ en async/await
-    console.log('🔑 Token final:', authToken ? 'TROUVÉ' : 'ABSENT');
-
-    if (!authToken) {
-      alert('⚠️ Session expirée. Veuillez vous reconnecter.');
-      window.location.href = '/login';
-      return;
-    }
-
-    try {
-      console.log('🧪 Test de la route upload...');
-      const testRes = await fetch('/api/test-upload', {
-        method: 'POST',
-        credentials: 'include'
-      });
-      console.log('🧪 Test route upload - Status:', testRes.status);
-      if (testRes.ok) {
-        const testData = await testRes.json();
-        console.log('🧪 Test route upload - Response:', testData);
-      }
-    } catch (testError) {
-      console.log('❌ Test route échoué:', testError);
-    }
-
+    // Validations
     if (!permis || !carte) {
       setMessage("⚠️ Merci de sélectionner les deux fichiers.");
       return;
@@ -150,7 +58,6 @@ export default function UploadDocumentsForm({ userId }) {
       return;
     }
 
-    console.log('✅ Validations passées, préparation FormData');
     setLoading(true);
     setMessage("");
 
@@ -159,78 +66,47 @@ export default function UploadDocumentsForm({ userId }) {
     formData.append("carte", carte);
 
     try {
-      const uploadUrl = `/api/upload-auth-test`;
-      console.log('📡 URL de upload:', uploadUrl);
-      console.log('📡 Token à envoyer:', authToken.substring(0, 20) + '...');
-
-      const res = await fetch(uploadUrl, {
+      const res = await fetch(`/api/upload-my-documents`, {
         method: "POST",
         body: formData,
-        credentials: 'include',
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Authorization': `Bearer ${authToken}`
-        }
+        credentials: 'include' // ← Seulement les cookies, pas d'Authorization header
       });
 
-      console.log('📥 Réponse upload - Status:', res.status);
-      console.log('📥 Réponse upload - StatusText:', res.statusText);
-      console.log('📥 Réponse upload - OK:', res.ok);
-
-      const contentType = res.headers.get('content-type');
-      console.log('📥 Content-Type reçu:', contentType);
-
-      if (!contentType || !contentType.includes('application/json')) {
-        console.error('❌ Réponse non-JSON détectée !');
-        const textResponse = await res.text();
-        console.error('📄 Contenu HTML/Texte reçu (200 premiers chars):', textResponse.substring(0, 200));
-        throw new Error(`Serveur a retourné ${contentType} au lieu de JSON`);
+      if (!res.ok) {
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error(`Erreur serveur (${res.status})`);
+        }
       }
 
       const data = await res.json();
-      console.log('📥 Réponse upload - Data:', data);
 
       if (res.ok) {
-        console.log('✅ Upload SUCCESS !');
         setMessage("✅ Documents envoyés avec succès !");
-
-        console.log('🚀 Appel handleRequestDriver...');
         await handleRequestDriver();
 
-        console.log('🧹 Nettoyage des fichiers...');
+        // Nettoyage
         setPermis(null);
         setCarte(null);
-
         const fileInputs = document.querySelectorAll('input[type="file"]');
         fileInputs.forEach((input) => {
           input.value = '';
         });
 
       } else {
-        console.log('❌ Upload FAILED - Status:', res.status);
         if (res.status === 401) {
-          console.log('❌ Session expirée détectée');
           setMessage("❌ Session expirée. Redirection vers la connexion...");
           setTimeout(() => {
             window.location.href = '/login';
           }, 2000);
           return;
         }
-        console.log('❌ Erreur upload:', data.error);
         setMessage(`❌ Erreur : ${data.error || "Erreur inconnue"}`);
       }
     } catch (err) {
-      console.error("❌ ERREUR UPLOAD DÉTAILLÉE :", err);
-
-      if (err.name === 'SyntaxError') {
-        setMessage("⚠️ Erreur serveur - réponse invalide (HTML au lieu de JSON)");
-      } else if (err.name === 'TypeError') {
-        setMessage("⚠️ Erreur de connexion réseau");
-      } else {
-        setMessage("⚠️ Erreur lors de l'envoi. Veuillez vérifier votre connexion.");
-      }
+      console.error("❌ ERREUR UPLOAD :", err);
+      setMessage("⚠️ Erreur lors de l'envoi. Veuillez vérifier votre connexion.");
     } finally {
-      console.log('🏁 handleSubmit - FIN');
       setLoading(false);
     }
   };
@@ -238,23 +114,6 @@ export default function UploadDocumentsForm({ userId }) {
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.formTitle}>📄 Envoi des documents chauffeur</h2>
-
-      {/* Debug info */}
-      <div style={{
-        backgroundColor: "#fff3cd",
-        padding: "10px",
-        borderRadius: "5px",
-        marginBottom: "15px",
-        fontSize: "12px",
-        fontFamily: "monospace"
-      }}>
-        <strong>🐛 Debug Info:</strong>
-        <br />UserId: {userId} (ne sera plus utilisé dans l'URL)
-        <br />Cookies: {typeof window !== 'undefined' ? (document.cookie ? 'présents' : 'absents') : 'N/A'}
-        <br />URL actuelle: {typeof window !== 'undefined' ? window.location.href : 'N/A'}
-        <br />Permis: {permis ? `${permis.name} (${(permis.size / 1024 / 1024).toFixed(2)}MB)` : 'Non sélectionné'}
-        <br />Carte: {carte ? `${carte.name} (${(carte.size / 1024 / 1024).toFixed(2)}MB)` : 'Non sélectionné'}
-      </div>
 
       <div style={{
         backgroundColor: "#f0f8ff",
@@ -276,17 +135,12 @@ export default function UploadDocumentsForm({ userId }) {
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label className={styles.formLabel}>
-            📄 Permis de conduire * :
-          </label>
+          <label className={styles.formLabel}>📄 Permis de conduire * :</label>
           <input
             className={styles.inputFile}
             type="file"
             accept="image/jpeg,image/jpg,image/png,application/pdf"
-            onChange={(e) => {
-              console.log('📄 Fichier permis sélectionné:', e.target.files[0]);
-              setPermis(e.target.files[0]);
-            }}
+            onChange={(e) => setPermis(e.target.files[0])}
             disabled={loading}
             required
           />
@@ -298,17 +152,12 @@ export default function UploadDocumentsForm({ userId }) {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.formLabel}>
-            🚖 Carte chauffeur * :
-          </label>
+          <label className={styles.formLabel}>🚖 Carte chauffeur * :</label>
           <input
             className={styles.inputFile}
             type="file"
             accept="image/jpeg,image/jpg,image/png,application/pdf"
-            onChange={(e) => {
-              console.log('🚖 Fichier carte sélectionné:', e.target.files[0]);
-              setCarte(e.target.files[0]);
-            }}
+            onChange={(e) => setCarte(e.target.files[0])}
             disabled={loading}
             required
           />
