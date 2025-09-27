@@ -40,7 +40,7 @@ export default function UploadDocumentsForm({ userId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validations
+    // Validations existantes...
     if (!permis || !carte) {
       setMessage("⚠️ Merci de sélectionner les deux fichiers.");
       return;
@@ -61,51 +61,64 @@ export default function UploadDocumentsForm({ userId }) {
     setLoading(true);
     setMessage("");
 
-    const formData = new FormData();
-    formData.append("permis", permis);
-    formData.append("carte", carte);
-
     try {
-      const res = await fetch(`/api/upload-my-documents`, {
+      // Convertir les fichiers en Base64
+      const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
+      };
+
+      console.log('🔄 Conversion des fichiers en Base64...');
+      const permisBase64 = await convertToBase64(permis);
+      const carteBase64 = await convertToBase64(carte);
+
+      // Envoyer en JSON au lieu de FormData
+      const res = await fetch(`/api/upload-my-documents-base64`, {
         method: "POST",
-        body: formData,
-        credentials: 'include' // ← Seulement les cookies, pas d'Authorization header
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          permis: {
+            data: permisBase64,
+            name: permis.name,
+            type: permis.type,
+            size: permis.size
+          },
+          carte: {
+            data: carteBase64,
+            name: carte.name,
+            type: carte.type,
+            size: carte.size
+          }
+        })
       });
 
       if (!res.ok) {
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error(`Erreur serveur (${res.status})`);
-        }
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Erreur serveur (${res.status})`);
       }
 
       const data = await res.json();
+      setMessage("✅ Documents envoyés avec succès !");
+      await handleRequestDriver();
 
-      if (res.ok) {
-        setMessage("✅ Documents envoyés avec succès !");
-        await handleRequestDriver();
+      // Nettoyage
+      setPermis(null);
+      setCarte(null);
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      fileInputs.forEach((input) => {
+        input.value = '';
+      });
 
-        // Nettoyage
-        setPermis(null);
-        setCarte(null);
-        const fileInputs = document.querySelectorAll('input[type="file"]');
-        fileInputs.forEach((input) => {
-          input.value = '';
-        });
-
-      } else {
-        if (res.status === 401) {
-          setMessage("❌ Session expirée. Redirection vers la connexion...");
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 2000);
-          return;
-        }
-        setMessage(`❌ Erreur : ${data.error || "Erreur inconnue"}`);
-      }
     } catch (err) {
       console.error("❌ ERREUR UPLOAD :", err);
-      setMessage("⚠️ Erreur lors de l'envoi. Veuillez vérifier votre connexion.");
+      setMessage(`⚠️ ${err.message}`);
     } finally {
       setLoading(false);
     }
