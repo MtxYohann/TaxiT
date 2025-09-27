@@ -2,7 +2,7 @@
 import { useState } from "react";
 import styles from "../styles/formulairedocuments.module.css";
 
-const handleRequestDriver = async () => { // ← Supprimé userId du paramètre
+const handleRequestDriver = async () => {
   console.log('🚀 handleRequestDriver - Début');
 
   try {
@@ -15,7 +15,6 @@ const handleRequestDriver = async () => { // ← Supprimé userId du paramètre
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
-      // ← SUPPRIMÉ : body: JSON.stringify({ userId }),
       credentials: 'include'
     });
 
@@ -61,12 +60,29 @@ export default function UploadDocumentsForm({ userId }) {
     e.preventDefault();
 
     console.log('🚀 handleSubmit - DÉBUT');
-    console.log('🔍 userId:', userId);
-    console.log('🔍 permis:', permis ? { name: permis.name, size: permis.size, type: permis.type } : 'null');
-    console.log('🔍 carte:', carte ? { name: carte.name, size: carte.size, type: carte.type } : 'null');
     console.log('🍪 Cookies au début:', document.cookie);
 
-    // Test de la route
+    const extractAuthToken = () => {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'auth-token') {
+          console.log('🔑 Token trouvé:', value.substring(0, 20) + '...');
+          return value;
+        }
+      }
+      console.log('❌ Token auth-token non trouvé');
+      return null;
+    };
+
+    const authToken = extractAuthToken();
+
+    if (!authToken) {
+      alert('⚠️ Session expirée. Veuillez vous reconnecter.');
+      window.location.href = '/login';
+      return;
+    }
+
     try {
       console.log('🧪 Test de la route upload...');
       const testRes = await fetch('/api/test-upload', {
@@ -74,8 +90,6 @@ export default function UploadDocumentsForm({ userId }) {
         credentials: 'include'
       });
       console.log('🧪 Test route upload - Status:', testRes.status);
-      console.log('🧪 Test route upload - OK:', testRes.ok);
-
       if (testRes.ok) {
         const testData = await testRes.json();
         console.log('🧪 Test route upload - Response:', testData);
@@ -85,24 +99,18 @@ export default function UploadDocumentsForm({ userId }) {
     }
 
     if (!permis || !carte) {
-      console.log('❌ Fichiers manquants');
       setMessage("⚠️ Merci de sélectionner les deux fichiers.");
       return;
     }
 
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
     if (!allowedTypes.includes(permis.type) || !allowedTypes.includes(carte.type)) {
-      console.log('❌ Types de fichiers non autorisés:', { permis: permis.type, carte: carte.type });
       setMessage("⚠️ Seuls les fichiers JPG, PNG et PDF sont acceptés.");
       return;
     }
 
     const maxSize = 5 * 1024 * 1024;
     if (permis.size > maxSize || carte.size > maxSize) {
-      console.log('❌ Fichiers trop volumineux:', {
-        permis: `${(permis.size / 1024 / 1024).toFixed(2)}MB`,
-        carte: `${(carte.size / 1024 / 1024).toFixed(2)}MB`
-      });
       setMessage("⚠️ Chaque fichier doit faire moins de 5MB.");
       return;
     }
@@ -115,24 +123,18 @@ export default function UploadDocumentsForm({ userId }) {
     formData.append("permis", permis);
     formData.append("carte", carte);
 
-    console.log('📦 FormData préparé avec:', {
-      permis: permis.name,
-      carte: carte.name
-    });
-
     try {
-      // ← MODIFIÉ : Nouvelle URL sans userId
       const uploadUrl = `/api/upload-my-documents`;
       console.log('📡 URL de upload:', uploadUrl);
-      console.log('📡 Envoi requête upload...');
-      console.log('🍪 Cookies avant requête upload:', document.cookie);
+      console.log('📡 Token à envoyer:', authToken.substring(0, 20) + '...');
 
       const res = await fetch(uploadUrl, {
         method: "POST",
         body: formData,
         credentials: 'include',
         headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'Authorization': `Bearer ${authToken}`
         }
       });
 
@@ -158,7 +160,7 @@ export default function UploadDocumentsForm({ userId }) {
         setMessage("✅ Documents envoyés avec succès !");
 
         console.log('🚀 Appel handleRequestDriver...');
-        await handleRequestDriver(); // ← SUPPRIMÉ : userId
+        await handleRequestDriver();
 
         console.log('🧹 Nettoyage des fichiers...');
         setPermis(null);
