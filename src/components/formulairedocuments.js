@@ -159,7 +159,7 @@ export default function UploadDocumentsForm({ userId }) {
     formData.append("carte", carte);
 
     try {
-      const uploadUrl = `/api/upload-my-documents`;
+      const uploadUrl = `/api/upload-auth-test`;
       console.log('📡 URL de upload:', uploadUrl);
       console.log('📡 Token à envoyer:', authToken.substring(0, 20) + '...');
 
