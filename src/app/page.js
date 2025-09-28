@@ -76,9 +76,9 @@ export default function Home() {
                             <a className={styles.secondary} href="/account">
                                 Mon compte
                             </a>
-                            <button className={styles.secondary} onClick={handleLogout}>
+                            <a className={styles.secondary} onClick={handleLogout}>
                                 Se déconnecter
-                            </button>
+                            </a>
                         </>
                     ) : (
                         // Si pas connecté : afficher "Se connecter" et "S'inscrire"

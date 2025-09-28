@@ -73,18 +73,12 @@ export default function Navbar() {
                             <Link href="/account">Profile</Link>
                         </li>
                         <li>
-                            <button
+                            <a
                                 onClick={handleLogout}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'inherit',
-                                    cursor: 'pointer',
-                                    textDecoration: 'underline'
-                                }}
+                                className={styles.secondary}
                             >
                                 Se déconnecter
-                            </button>
+                            </a>
                         </li>
                     </>
                 )}
