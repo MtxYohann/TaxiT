@@ -36,32 +36,17 @@ export const fetchUserData = async (setUser, setReservations, setError) => {
 export const deleteAccount = async (router, setError) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ?")) {
         try {
-            const userData = getUser();
-            const token = getToken();
-
-            if (!userData || !token) {
-                throw new Error("Utilisateur non connecté");
-            }
-
             const res = await fetch("/api/delete", {
                 method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ email: userData.email }),
+                credentials: "include" // ← important pour envoyer le cookie HttpOnly
             });
 
             if (!res.ok) {
                 throw new Error("Erreur lors de la suppression du compte.");
             }
 
-            // Nettoyer le localStorage après suppression
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-
             alert("Compte supprimé avec succès.");
-            router.push("/register");
+            router.push("/login");
         } catch (err) {
             setError(err.message);
         }
