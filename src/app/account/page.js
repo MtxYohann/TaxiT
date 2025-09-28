@@ -102,9 +102,7 @@ export default function AccountPage() {
                 <p><strong>Nom :</strong> {user.name}</p>
                 <p><strong>Email :</strong> {user.email}</p>
                 <p><strong>Téléphone :</strong> {user.phone}</p>
-                {user.isDriverRequested && (
-                    <p><strong>Statut de chauffeur :</strong> En attente de validation</p>
-                )}
+
                 {user.isApproved === true && !user.subscriptionId && (
                     <p>
                         <strong>Statut de chauffeur :</strong> Votre compte chauffeur est approuvé, vous devez maintenant vous abonner pour accéder à la plateforme.
