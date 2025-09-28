@@ -8,12 +8,18 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
+    const [acceptTerms, setAcceptTerms] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!acceptTerms) {
+            setError("Vous devez accepter les conditions générales d'utilisation pour vous inscrire");
+            return;
+        }
 
         try {
             const res = await fetch("/api/register", {
@@ -120,6 +126,57 @@ export default function RegisterPage() {
                     <small style={{ color: "#666" }}>
                         Minimum 6 caractères
                     </small>
+                </div>
+                <div style={{
+                    marginBottom: "15px",
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "8px"
+                }}>
+                    <input
+                        type="checkbox"
+                        id="acceptTerms"
+                        checked={acceptTerms}
+                        onChange={(e) => setAcceptTerms(e.target.checked)}
+                        required
+                        style={{
+                            marginTop: "2px",
+                            transform: "scale(1.1)"
+                        }}
+                    />
+                    <label
+                        htmlFor="acceptTerms"
+                        style={{
+                            fontSize: "14px",
+                            lineHeight: "1.4",
+                            color: "#333",
+                            cursor: "pointer"
+                        }}
+                    >
+                        J'accepte les{" "}
+                        <a
+                            href="/terms"
+                            target="_blank"
+                            style={{
+                                color: "#0070f3",
+                                textDecoration: "underline"
+                            }}
+                        >
+                            conditions générales d'utilisation
+                        </a>
+                        {" "}et la{" "}
+                        <a
+                            href="/privacy"
+                            target="_blank"
+                            style={{
+                                color: "#0070f3",
+                                textDecoration: "underline"
+                            }}
+                        >
+                            politique de confidentialité
+                        </a>
+                        <span style={{ color: "red", marginLeft: "2px" }}>*</span>
+                    </label>
                 </div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 {success && <p style={{ color: "green" }}>{success}</p>}
