@@ -18,7 +18,7 @@ export default function ReviewButton({ driverId, reservationId }) {
             setMessage("Vous devez être connecté pour laisser un avis.");
             return;
         }
-        const res = await fetch("/api/reviews", {
+        const res = await fetch("http://localhost:4000/api/reviews", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

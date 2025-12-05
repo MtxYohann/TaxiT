@@ -49,7 +49,7 @@ export default function EditAccountPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch("/api/edit-account", {
+            const res = await fetch("http://localhost:4000/api/edit-account", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

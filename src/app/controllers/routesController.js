@@ -1,6 +1,6 @@
 export const calculerTarif = async (distance, duration, dateTime) => {
   try {
-    const response = await fetch("/api/calculer-tarif", {
+    const response = await fetch("http://localhost:4000/api/calculer-tarif", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

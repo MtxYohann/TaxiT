@@ -43,7 +43,7 @@ export const deleteAccount = async (router, setError) => {
                 throw new Error("Utilisateur non connecté");
             }
 
-            const res = await fetch("/api/delete", {
+            const res = await fetch("http://localhost:4000/api/delete", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
