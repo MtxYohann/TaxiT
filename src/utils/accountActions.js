@@ -15,7 +15,7 @@ export const fetchUserData = async (setUser, setReservations, setError) => {
         setUser(userData);
 
         // Récupérer les réservations avec le token
-        const resResa = await fetch(`/api/reservations/${userData.id}`, {
+        const resResa = await fetch(`http://localhost:4000/api/reservations/${userData.id}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
