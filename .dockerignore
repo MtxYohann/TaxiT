@@ -1,0 +1,10 @@
+.next
+node_modules
+dist
+.env
+.env.local
+.env.production
+.vscode
+.git
+*.log
+pnpm-store

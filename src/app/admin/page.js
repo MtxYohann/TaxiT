@@ -8,7 +8,7 @@ const handleDelete = async (email, token) => { // ← AJOUTÉ : token en paramè
   if (!confirm(`Supprimer ${email} ?`)) return;
 
   try {
-    const res = await fetch("http://localhost:4000/api/delete", {
+    const res = await fetch("process.env.next_public_api_url/api/delete", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +32,7 @@ const handleEdit = async (user, token) => { // ← AJOUTÉ : token en paramètre
   if (!newName && !newPhone) return;
 
   try {
-    const res = await fetch("http://localhost:4000/api/edit-account", {
+    const res = await fetch("process.env.next_public_api_url/api/edit-account", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export default function AdminPage() {
     const fetchUsers = async () => {
       if (selectedModule === "users") {
         try {
-          const res = await fetch("http://localhost:4000/api/users", {
+          const res = await fetch("process.env.next_public_api_url/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();
@@ -83,7 +83,7 @@ export default function AdminPage() {
       }
       if (selectedModule === "chauffeurs") {
         try {
-          const res = await fetch("http://localhost:4000/api/users", {
+          const res = await fetch("process.env.next_public_api_url/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();
@@ -95,7 +95,7 @@ export default function AdminPage() {
       }
       if (selectedModule === "verif-chauffeurs") {
         try {
-          const res = await fetch("http://localhost:4000/api/users", {
+          const res = await fetch("process.env.next_public_api_url/api/users", {
             headers: { "Authorization": `Bearer ${token}` } // ← AJOUTÉ : Token
           });
           const data = await res.json();

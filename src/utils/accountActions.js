@@ -15,7 +15,7 @@ export const fetchUserData = async (setUser, setReservations, setError) => {
         setUser(userData);
 
         // Récupérer les réservations avec le token
-        const resResa = await fetch(`http://localhost:4000/api/reservations/${userData.id}`, {
+        const resResa = await fetch(`process.env.next_public_api_url/api/reservations/${userData.id}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
@@ -43,7 +43,7 @@ export const deleteAccount = async (router, setError) => {
                 throw new Error("Utilisateur non connecté");
             }
 
-            const res = await fetch("http://localhost:4000/api/delete", {
+            const res = await fetch("process.env.next_public_api_url/api/delete", {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

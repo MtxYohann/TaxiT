@@ -128,7 +128,7 @@ export default function AccountPage() {
                     style={{ backgroundColor: "#ff9800", marginBottom: "16px" }}
                     onClick={async () => {
                         // ← CHANGÉ : Ajoute le token d'authentification
-                        const res = await fetch("http://localhost:4000/api/subscription/cancel-subscription", {
+                        const res = await fetch("process.env.next_public_api_url/api/subscription/cancel-subscription", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
