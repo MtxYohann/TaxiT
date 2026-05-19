@@ -5,6 +5,8 @@ import { formatLocalDateTime } from "../../utils/dateUtils"; // ← AJOUTÉ : Ut
 import { getAddressFromCoords } from "@/src/utils/accountActions";
 import { useRouter } from "next/navigation";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
 const DriverDashboard = () => {
   const { user, loading, isAuthenticated, token } = useAuth(); // ← CHANGÉ : Utilise useAuth
   const router = useRouter();
@@ -20,7 +22,7 @@ const DriverDashboard = () => {
     if (!chauffeurId) return;
     setOrdersLoading(true);
 
-    let url = `/api/reservations/driver/${chauffeurId}`;
+    let url = `${API_BASE_URL}/api/reservations/driver/${chauffeurId}`;
     if (selectedTab === "future") url += "?status=accepted&upcoming=true";
     else if (selectedTab === "history") url += "?history=true";
 
@@ -30,14 +32,21 @@ const DriverDashboard = () => {
           "Authorization": `Bearer ${token}` // ← AJOUTÉ : Token d'authentification
         }
       });
+
+      if (!res.ok) {
+        const errorPayload = await res.json().catch(() => ({}));
+        throw new Error(errorPayload.error || "Impossible de charger les courses chauffeur.");
+      }
+
       const data = await res.json();
-      setOrders(data);
+      const list = Array.isArray(data) ? data : [];
+      setOrders(list);
 
       const pickupMap = {};
       const dropoffMap = {};
 
       await Promise.all(
-        data.map(async (order) => {
+        list.map(async (order) => {
           const pickup = await getAddressFromCoords(order.pickupLat, order.pickupLng);
           const dropoff = await getAddressFromCoords(order.dropoffLat, order.dropoffLng);
           pickupMap[order.id] = pickup;
@@ -68,7 +77,7 @@ const DriverDashboard = () => {
 
   const handleUpdateStatus = async (reservationId, action) => {
     try {
-      const res = await fetch(`/api/reservations/${reservationId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/reservations/${reservationId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

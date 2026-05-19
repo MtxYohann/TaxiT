@@ -38,16 +38,27 @@ export const getUser = () => {
 export const getToken = () => {
     if (typeof window !== 'undefined') {
         const token = localStorage.getItem('token');
-        console.log('getToken - token:', token);
         
         // Vérification pour éviter les tokens invalides
         if (!token || token === 'undefined' || token === 'null') {
+            const rawUser = localStorage.getItem('user');
+            if (rawUser && rawUser !== 'undefined' && rawUser !== 'null') {
+                try {
+                    const parsedUser = JSON.parse(rawUser);
+                    const tokenFromUser = parsedUser?.token;
+                    if (tokenFromUser && tokenFromUser !== 'undefined' && tokenFromUser !== 'null') {
+                        localStorage.setItem('token', tokenFromUser);
+                        return tokenFromUser;
+                    }
+                } catch (error) {
+                    return null;
+                }
+            }
             return null;
         }
         
         return token;
     }
-    console.log('getToken - côté serveur, retourne null');
     return null;
 };
 

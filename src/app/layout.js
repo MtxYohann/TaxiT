@@ -1,10 +1,6 @@
-"use client";
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
-import Navbar from "../components/Navbar"
-import Head from "next/head";
-import { LoadScript } from "@react-google-maps/api";
+import AppShell from "../components/AppShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,21 +12,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "TaxiT",
+  description: "Application de reservation de taxi",
+};
+
 
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <LoadScript
-          googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-          libraries={["places"]}
-        >
-            <Navbar />
-            <main>{children}</main>
-        </LoadScript>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
